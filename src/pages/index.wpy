@@ -1,4 +1,7 @@
-<style lang="less">
+<style lang="scss">
+
+  @import '../assets/style/root.scss';
+
   .userinfo {
     display: flex;
     flex-direction: column;
@@ -14,6 +17,18 @@
   .userinfo-nickname {
     color: #aaa;
   }
+
+  .test {
+    @include root(ha) {
+      &::after {
+        content: "aaa";
+        color: red;
+      }
+      color: blue;
+    }
+  }
+
+
 </style>
 <template>
   <view class="container">
@@ -24,7 +39,6 @@
 
     <panel>
       <view class="title" slot="title">测试数据绑定</view>
-
       <text class="info">{{normalTitle}}</text>
       <text class="info">{{setTimeoutTitle}}</text>
       <text class="info">{{mixin}}</text>
@@ -72,6 +86,10 @@
       <view class="title" slot="title">测试列表</view>
       <list></list>
     </panel>
+
+    <view class="test">
+      <text class="test-ha">哈哈哈哈</text>
+    </view>
 
     <toast />
   </view>
