@@ -1,16 +1,37 @@
 <style lang="scss">
+  @import '../assets/style/_variables.scss';
 
+  .photo {
+    text {
+      font-size: 30rpx;
+      color: $font;
+      display: block;
+    }
+  }
 </style>
 
 <template>
-  
+  <view class="photo">
+    <text>Photo Wall Works !</text>
+    <text>query: {{query}}</text>
+  </view>
 </template>
 
 <script>
-import wepy from 'wepy'
+  import wepy from 'wepy'
+  import Toast from 'wepy-com-toast'
 
-export default class PhotoWall extends wepy.component {
-  
-}
+  export default class PhotoWall extends wepy.component {
+    data = {
+
+    }
+
+    props = {
+      query: {
+        type: String,
+        default: ''
+      }
+    }
+  }
 </script>
 

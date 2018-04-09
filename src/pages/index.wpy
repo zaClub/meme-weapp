@@ -16,9 +16,10 @@
 
 <template>
   <view class="home">
-    <searchbar></searchbar>
+    <searchbar :query.sync="query"></searchbar>
     <view class="container">
-      <alltag></alltag>
+      <alltag wx:if="{{isShowTags}}"></alltag>
+      <photowall wx:if="{{isShowPhotos}}" :query.sync="query"></photowall>
     </view>
   </view>
 </template>
@@ -27,25 +28,78 @@
   import wepy from 'wepy'
   import SearchBar from '@/components/search-bar'
   import AllTag from '@/components/all-tag'
+  import PhotoWall from '@/components/photo-wall'
 
   export default class Index extends wepy.page {
     config = {}
 
     components = {
       searchbar: SearchBar,
-      alltag: AllTag
+      alltag: AllTag,
+      photowall: PhotoWall
     }
 
-    data = {}
-
-    computed = {}
-
-    methods = {}
+    data = {
+      query: '',
+      isShowPhotos: true,
+      isShowTags: false
+    }
 
     events = {
-      onQueryChange: (...args) => {
-        console.log('获得搜索组件发射的 query:', args[0])
-      }
+      //搜索框获得焦点
+      onInputFocus: (...args) => {
+        let value = args[0]
+        if(!value) {
+          this.query = ''
+          this.$apply()
+          this.showAllTags()
+        }
+      },
+
+      //搜索框失去焦点
+      onInputBlur: (...args) => {
+        let value = args[0]
+        if(!value) {
+          this.query = ''
+          this.$apply()
+          this.showPhotoWall()
+        }
+      },
+
+      //监听输入过程
+      onInputing: (...args) => {
+        let value = args[0]
+        if(!value) {
+          this.showAllTags()
+        }
+      },
+
+      //键盘点击搜索按钮
+      onInputConfirm: (...args) => {
+        let value = args[0]
+        this.query = value ? value : ''
+        this.$apply()
+        this.showPhotoWall()
+      },
+
+      //处理标签的点击
+      onClickTag: (...args) => {
+        
+      },
+    }
+
+    //显示所有标签
+    showAllTags = () => { 
+      this.isShowTags = true
+      this.isShowPhotos = false
+      this.$apply()
+    }
+
+    //显示瀑布照片墙
+    showPhotoWall = () => {
+      this.isShowTags = false
+      this.isShowPhotos = true
+      this.$apply()
     }
 
     onLoad() {}
