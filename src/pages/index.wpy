@@ -1,39 +1,55 @@
-<style lang="sass">
+<style lang="scss">
   @import '../assets/style/_variables.scss';
+
+  .home {
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    background: $bg;
+
+    .container {
+      padding: 30rpx;
+    }
+  }
 </style>
 
 <template>
-  <searchbar></searchbar>
+  <view class="home">
+    <searchbar></searchbar>
+    <view class="container">
+      <alltag></alltag>
+    </view>
+  </view>
 </template>
 
 <script>
-import wepy from 'wepy'
-import SearchBar from '@/components/search-bar'
+  import wepy from 'wepy'
+  import SearchBar from '@/components/search-bar'
+  import AllTag from '@/components/all-tag'
 
-export default class Index extends wepy.page {
-  
-  config = { }
+  export default class Index extends wepy.page {
+    config = {}
 
-  components = {
-    searchbar: SearchBar
+    components = {
+      searchbar: SearchBar,
+      alltag: AllTag
+    }
+
+    data = {}
+
+    computed = {}
+
+    methods = {}
+
+    events = {
+      onQueryChange: (...args) => {
+        console.log('获得搜索组件发射的 query:', args[0])
+      }
+    }
+
+    onLoad() {}
   }
-
-  data = { }
-
-  computed = { }
-
-  methods = { }
-
-  events = { }
-
-  onLoad() {
-
-  }
-
-  onLoad() {
-    
-  }
-}
 </script>
 
 

@@ -1,7 +1,7 @@
 <style lang="scss">
   @import '../assets/style/_variables.scss';
-
-  .panel {
+  
+  .search {
     width: 100%;
     height: 100rpx;
     background: $teal;
@@ -18,35 +18,57 @@
 
       input {
         height: 100%;
+        width: 100;
         margin-left: 20rpx;
         margin-right: 20rpx;
       }
     }
   }
-
 </style>
 
 <template>
-  <view class="panel">
-    <view class="panel__bar">
-      <input placeholder="按标签关键字搜索" auto-focus/>
+  <view class="search">
+    <view class="search__bar">
+      <input placeholder="按标签关键字搜索" confirm-type="search" 
+        bindfocus="onInputFocus" bindblur="onInputBlur"
+        bindconfirm="onInputConfirm"/>
     </view>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy'
+  import wepy from 'wepy'
 
-export default class SearchBar extends wepy.component {
-  data = { }
-  
-  events = { }
+  export default class SearchBar extends wepy.component {
+    data = {
+      query: ''
+    }
 
-  methods = { }
+    events = {}
 
-  onLoad() {
+    methods = {
+      onInputFocus(event) {
+        console.log('搜索框获得焦点')
+        let value = event.detail.value
+        this.query = value ? value : ''
+        this.$apply()
+      },
+      onInputBlur(event) {
+        console.log('搜索框失去焦点')
+        let value = event.detail.value
+        this.query = value ? value : ''
+        this.$apply()
 
+        if (!this.query) return
+        this.$emit('onQueryChange', this.query)
+      },
+      onInputConfirm(event) {
+        if (!this.query) return
+        this.$emit('onQueryChange', this.query)
+      }
+    }
+
+    onLoad() {}
   }
-}
 </script>
 

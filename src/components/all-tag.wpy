@@ -1,0 +1,64 @@
+<style lang="scss">
+  @import '../assets/style/_variables.scss';
+
+  %tag-item {
+    display: inline-block;
+    padding: 10rpx 24rpx;
+    border: 1rpx solid $edge;
+    background: transparent;
+    border-radius: 30rpx;
+    text-align: center;
+    margin-right: 20rpx;
+    margin-top: 20rpx;
+    font-size: 30rpx;
+    letter-spacing: 4rpx;
+    color: $font;
+  }
+
+  .tag {
+    box-sizing: border-box;
+
+    text {
+      font-size: 30rpx;
+      color: $font;
+    }
+
+    .content {
+      margin-top: 10rpx;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    &__item {
+      @extend %tag-item;
+    }
+
+    &__item--selected {
+      @extend %tag-item;
+      background: $white;
+      color: $teal;
+      border-color: $teal;
+    }
+  }
+</style>
+
+<template>
+  <view class="tag">
+    <text>所有标签</text>
+    <view class="content">
+      <view class="tag__item" wx:for-items="{{tags}}" wx:for-item="item" wx:key="id">{{item}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class AllTag extends wepy.component {
+    data = {
+      tags: ['未标记','宋民国','权律二','van','张学友'],
+    }
+  }
+</script>
+
+
