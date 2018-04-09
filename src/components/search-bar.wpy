@@ -1,0 +1,52 @@
+<style lang="scss">
+  @import '../assets/style/_variables.scss';
+
+  .panel {
+    width: 100%;
+    height: 100rpx;
+    background: $teal;
+    padding: 18rpx;
+    box-sizing: border-box;
+
+    &__bar {
+      height: 64rpx;
+      width: 100%;
+      background: white;
+      border-radius: 30rpx;
+      font-size: 30rpx;
+      text-align: center;
+
+      input {
+        height: 100%;
+        margin-left: 20rpx;
+        margin-right: 20rpx;
+      }
+    }
+  }
+
+</style>
+
+<template>
+  <view class="panel">
+    <view class="panel__bar">
+      <input placeholder="按标签关键字搜索" auto-focus/>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class SearchBar extends wepy.component {
+  data = { }
+  
+  events = { }
+
+  methods = { }
+
+  onLoad() {
+
+  }
+}
+</script>
+
