@@ -1,53 +1,53 @@
 <style lang="scss">
-@import '../assets/style/_variables.scss';
+  @import '../assets/style/_variables.scss';
 
-%tag-item {
-  display: inline-block;
-  padding: 10rpx 24rpx;
-  border: 1rpx solid $edge;
-  background: transparent;
-  border-radius: 30rpx;
-  text-align: center;
-  margin-right: 20rpx;
-  margin-top: 20rpx;
-  font-size: 30rpx;
-  letter-spacing: 4rpx;
-  color: $font;
-}
-
-.tag {
-  box-sizing: border-box;
-
-  text {
+  %tag-item {
+    display: inline-block;
+    padding: 10rpx 24rpx;
+    border: 1rpx solid $edge;
+    background: transparent;
+    border-radius: 30rpx;
+    text-align: center;
+    margin-right: 20rpx;
+    margin-top: 20rpx;
     font-size: 30rpx;
+    letter-spacing: 4rpx;
     color: $font;
   }
 
-  .content {
-    margin-top: 10rpx;
-    display: flex;
-    flex-wrap: wrap;
-  }
+  .alltag {
+    box-sizing: border-box;
 
-  &__item {
-    @extend %tag-item;
-  }
+    text {
+      font-size: 30rpx;
+      color: $font;
+    }
 
-  &__item--selected {
-    @extend %tag-item;
-    background: $white;
-    color: $teal;
-    border-color: $teal;
+    .content {
+      margin-top: 10rpx;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    &__item {
+      @extend %tag-item;
+    }
+
+    &__item--selected {
+      @extend %tag-item;
+      background: $white;
+      color: $teal;
+      border-color: $teal;
+    }
   }
-}
 </style>
 
 <template>
-  <view class="tag">
+  <view class="alltag">
     <text>所有标签</text>
     <view class="content">
       <view wx:for-items="{{tags}}" wx:for-item="item" wx:key="id"
-        class="{{(item.active && !forSearch) ? 'tag__item--selected':'tag__item'}}"
+        class="{{(item.active && !forSearch) ? 'alltag__item--selected':'alltag__item'}}"
         @tap="onTagTap({{item.id}})">{{item.name}}</view>
     </view>
   </view>

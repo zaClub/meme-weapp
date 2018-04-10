@@ -14,13 +14,13 @@
       background: white;
       border-radius: 30rpx;
       font-size: 30rpx;
-      text-align: center;
+      text-align: left;
 
       input {
         height: 100%;
         width: 100;
-        margin-left: 20rpx;
-        margin-right: 20rpx;
+        margin-left: 30rpx;
+        margin-right: 30rpx;
       }
     }
   }

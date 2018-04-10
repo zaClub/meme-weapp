@@ -1,0 +1,68 @@
+<style lang="scss">
+  @import '../assets/style/_variables.scss';
+
+  .tag {
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    background: $bg;
+
+    .container {
+      padding: 30rpx;
+
+      text {
+        display: block;
+        font-size: 30rpx;
+      }
+    }
+  }
+
+</style>
+
+<template>
+  <view class="tag">
+    <view class="container">
+      <text>memeId: {{memeId}}</text>
+      <alltag :tags.sync="tags"></alltag>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import AllTag from '@/components/all-tag'
+
+  export default class Tag extends wepy.page {
+    
+    onLoad(option) {
+      //接收路由参数
+      console.log('option',option)
+
+      //TODO: id 判空
+      this.memeId = option.id
+      this.$apply()
+    }
+
+    data = {
+      memeId: '',
+      tags: [
+        { id: 1, name:'未标记', active: false },
+        { id: 2, name:'宋民国', active: false },
+        { id: 3, name:'权律二', active: false },
+        { id: 4, name:'van', active: false },
+        { id: 5, name:'张学友', active: false }
+      ],
+    }
+
+    props = {
+
+    }
+
+    components = {
+      alltag: AllTag
+    }
+  }
+</script>
+
+

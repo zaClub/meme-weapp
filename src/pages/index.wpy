@@ -19,6 +19,7 @@
     <searchbar :disabled.sync="barDisabled"></searchbar>
     <view class="container">
       <!-- <photowall :query.sync="query"></photowall> -->
+      <button @tap="testTag">测试编辑标签</button>
     </view>
   </view>
 </template>
@@ -50,6 +51,14 @@
           url: 'search'
         })
       },
+    }
+
+    methods = {
+      testTag: () => {
+        wx.navigateTo({
+          url: 'tag?id=666'
+        })
+      }
     }
 
     onLoad() {}
