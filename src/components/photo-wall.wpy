@@ -23,13 +23,21 @@
 
   export default class PhotoWall extends wepy.component {
     data = {
+      photos : [
 
+      ]
     }
+
+    // watcher = {
+    //   query: (newValue, oldValue) => {
+
+    //   }
+    // }
 
     props = {
       query: {
         type: String,
-        default: ''
+        default: '',
       }
     }
   }

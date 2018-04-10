@@ -1,53 +1,54 @@
 <style lang="scss">
-  @import '../assets/style/_variables.scss';
+@import '../assets/style/_variables.scss';
 
-  %tag-item {
-    display: inline-block;
-    padding: 10rpx 24rpx;
-    border: 1rpx solid $edge;
-    background: transparent;
-    border-radius: 30rpx;
-    text-align: center;
-    margin-right: 20rpx;
-    margin-top: 20rpx;
+%tag-item {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  border: 1rpx solid $edge;
+  background: transparent;
+  border-radius: 30rpx;
+  text-align: center;
+  margin-right: 20rpx;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  letter-spacing: 4rpx;
+  color: $font;
+}
+
+.tag {
+  box-sizing: border-box;
+
+  text {
     font-size: 30rpx;
-    letter-spacing: 4rpx;
     color: $font;
   }
 
-  .tag {
-    box-sizing: border-box;
-
-    text {
-      font-size: 30rpx;
-      color: $font;
-    }
-
-    .content {
-      margin-top: 10rpx;
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    &__item {
-      @extend %tag-item;
-    }
-
-    &__item--selected {
-      @extend %tag-item;
-      background: $white;
-      color: $teal;
-      border-color: $teal;
-    }
+  .content {
+    margin-top: 10rpx;
+    display: flex;
+    flex-wrap: wrap;
   }
+
+  &__item {
+    @extend %tag-item;
+  }
+
+  &__item--selected {
+    @extend %tag-item;
+    background: $white;
+    color: $teal;
+    border-color: $teal;
+  }
+}
 </style>
 
 <template>
   <view class="tag">
     <text>所有标签</text>
     <view class="content">
-      <view class="tag__item" @tap="onTagTap(item.id)"
-        wx:for-items="{{tags}}" wx:for-item="item" wx:key="id">{{item.name}}</view>
+      <view wx:for-items="{{tags}}" wx:for-item="item" wx:key="id"
+        class="{{(item.active && !forSearch) ? 'tag__item--selected':'tag__item'}}"
+        @tap="onTagTap({{item.id}})">{{item.name}}</view>
     </view>
   </view>
 </template>
@@ -56,27 +57,52 @@
   import wepy from 'wepy'
 
   export default class AllTag extends wepy.component {
+
+    onLoad() {
+      console.log(this.$name,'onLoad()')
+    }
+
     data = {
-      tags: [
-        { id: 1, name:'未标记', active: false },
-        { id: 2, name:'宋民国', active: false },
-        { id: 3, name:'权律二', active: false },
-        { id: 4, name:'van', active: false },
-        { id: 5, name:'张学友', active: false }
-      ],
+      
+    }
+
+    props = {
+      //forSearch:true 时，组件给搜索页面使用
+      forSearch: {
+        type: Boolean,
+        default: false,
+      },
+
+      tags: {
+        default: []
+      }
     }
 
     methods = {
+      //点击某个标签
       onTagTap(tagId) {
-        this.tags.map(el => {
-          if (tagId === el.id) el.active = !el.active
-        })
-      }
+        console.log('点击标签')
+        this.tagStatus(tagId)
+
+        //将选中的 tag 发射给父组件
+        this.$emit('onTagChange', this.tags.filter(el => el.active))
+      },
+      
+    }
+
+    //改变标签状态 (active:true 表示选中)
+    tagStatus(tagId) {
+      this.tags.map(el => {
+        if (el.id !== tagId) return el
+        el.active = !el.active
+        return el
+      })
     }
 
     events = {
 
     }
+
   }
 </script>
 

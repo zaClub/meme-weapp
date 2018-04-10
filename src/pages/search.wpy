@@ -1,0 +1,112 @@
+<style lang="scss">
+  @import '../assets/style/_variables.scss';
+
+  .search {
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    background: $bg;
+
+    .container {
+      padding: 30rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="search">
+    <searchbar :query.sync="query"></searchbar>
+    <view class="container">
+      <alltag wx:if="{{isShowTags}}" :forSearch.sync="forSearch" :tags.sync="tags"></alltag>
+      <photowall wx:if="{{isShowPhotos}}" :query.sync="query"></photowall>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import SearchBar from '@/components/search-bar'
+  import AllTag from '@/components/all-tag'
+  import PhotoWall from '@/components/photo-wall'
+
+  export default class Search extends wepy.page {
+
+    data = {
+      query: '',
+      isShowPhotos: false,
+      isShowTags: true,
+      forSearch: true,
+
+      tags: [
+        { id: 1, name:'未标记', active: false },
+        { id: 2, name:'宋民国', active: false },
+        { id: 3, name:'权律二', active: false },
+        { id: 4, name:'van', active: false },
+        { id: 5, name:'张学友', active: false }
+      ],
+    }
+
+    components = {
+      searchbar: SearchBar,
+      alltag: AllTag,
+      photowall: PhotoWall
+    }
+
+    methods = {
+
+    }
+
+    events = {
+      //若输入过程中把搜索框字符全部删除，则显示 [所有标签]
+      onInputing: (value) => {
+        if(!value) {
+          this.showAllTags()
+          this.tags.forEach(el => {
+            el.active = false
+          });
+        }
+      },
+
+      //点击键盘的搜索按钮
+      onInputConfirm: (value) => {
+        this.query = value ? value : ''
+        if (!this.query) return
+        this.$apply()
+        this.showPhotoWall()
+      },
+
+      //接收已选中的标签
+      onTagChange: (tags) => {
+        let str = ''
+        for (let el of tags) {
+          str += el.name
+        }
+        this.query = str
+        this.$apply()
+        this.showPhotoWall()
+      },
+
+    }
+
+    //显示所有标签
+    showAllTags = () => { 
+      this.isShowTags = true
+      this.isShowPhotos = false
+      this.$apply()
+    }
+
+    //显示瀑布照片墙
+    showPhotoWall = () => {
+      this.isShowTags = false
+      this.isShowPhotos = true
+      this.$apply()
+    }
+
+    onLoad() {
+      //初始化搜索页面时显示 [所有标签]
+      this.showAllTags()
+    }
+  }
+</script>
+

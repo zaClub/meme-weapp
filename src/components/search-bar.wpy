@@ -1,14 +1,14 @@
 <style lang="scss">
   @import '../assets/style/_variables.scss';
   
-  .search {
+  .searchbar {
     width: 100%;
     height: 100rpx;
     background: $teal;
     padding: 18rpx;
     box-sizing: border-box;
 
-    &__bar {
+    &__panel {
       height: 64rpx;
       width: 100%;
       background: white;
@@ -27,15 +27,18 @@
 </style>
 
 <template>
-  <view class="search">
-    <view class="search__bar">
+  <view class="searchbar">
+    <view class="searchbar__panel">
       <input placeholder="按标签关键字搜索" 
+        auto-focus
         value="{{query}}"
+        disabled="{{disabled}}"
         confirm-type="search" 
-        bindfocus="onFocus" 
-        bindinput="onInput"
-        bindblur="onBlur"
-        bindconfirm="onConfirm"/>
+        @focus="onFocus" 
+        @input="onInput"
+        @blur="onBlur"
+        @confirm="onConfirm"
+        @tap="onClick"/>
     </view>
   </view>
 </template>
@@ -45,13 +48,15 @@
   import Toast from 'wepy-com-toast'
 
   export default class SearchBar extends wepy.component {
-    data = {
-    }
-
     props = {
       query: {
         type: String,
         default: '',
+        twoWay: true
+      },
+      disabled: {
+        type: Boolean,
+        default: false
       }
     }
 
@@ -64,26 +69,31 @@
     methods = {
       onFocus: event => {
         console.log('搜索框获得焦点')
-        let value = event.detail.value
+        let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputFocus', value)
       },
 
       onBlur: event => {
         console.log('搜索框失去焦点')
-        let value = event.detail.value
+        let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputBlur', value)
       },
 
       onInput: event => {
-        let value = event.detail.value
+        let value = event.detail.value ? event.detail.value : ''
         console.log('输入中',value)
         this.$emit('onInputing', value)
       },
 
       onConfirm: event => {
         console.log('点击搜索按钮')
-        let value = event.detail.value
+        let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputConfirm', value)
+      },
+
+      onClick: event => {
+        console.log('点击搜索框')
+        this.$emit('onInputClick')
       },
 
       toast: title => {
@@ -92,10 +102,10 @@
           title: title
         })
         promise.then(fb => {})
-      }
+      },
     }
 
-    onLoad() {}
+    onLoad() { console.log(this.$name,'onLoad()') }
   }
 </script>
 

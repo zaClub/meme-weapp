@@ -16,10 +16,9 @@
 
 <template>
   <view class="home">
-    <searchbar :query.sync="query"></searchbar>
+    <searchbar :disabled.sync="barDisabled"></searchbar>
     <view class="container">
-      <alltag wx:if="{{isShowTags}}"></alltag>
-      <photowall wx:if="{{isShowPhotos}}" :query.sync="query"></photowall>
+      <!-- <photowall :query.sync="query"></photowall> -->
     </view>
   </view>
 </template>
@@ -41,65 +40,16 @@
 
     data = {
       query: '',
-      isShowPhotos: true,
-      isShowTags: false
+      barDisabled: true,
     }
 
     events = {
-      //搜索框获得焦点
-      onInputFocus: (...args) => {
-        let value = args[0]
-        if(!value) {
-          this.query = ''
-          this.$apply()
-          this.showAllTags()
-        }
+      //点击搜索框跳转到搜索页面
+      onInputClick: () => {
+        wx.navigateTo({
+          url: 'search'
+        })
       },
-
-      //搜索框失去焦点
-      onInputBlur: (...args) => {
-        let value = args[0]
-        if(!value) {
-          this.query = ''
-          this.$apply()
-          this.showPhotoWall()
-        }
-      },
-
-      //监听输入过程
-      onInputing: (...args) => {
-        let value = args[0]
-        if(!value) {
-          this.showAllTags()
-        }
-      },
-
-      //键盘点击搜索按钮
-      onInputConfirm: (...args) => {
-        let value = args[0]
-        this.query = value ? value : ''
-        this.$apply()
-        this.showPhotoWall()
-      },
-
-      //处理标签的点击
-      onClickTag: (...args) => {
-        
-      },
-    }
-
-    //显示所有标签
-    showAllTags = () => { 
-      this.isShowTags = true
-      this.isShowPhotos = false
-      this.$apply()
-    }
-
-    //显示瀑布照片墙
-    showPhotoWall = () => {
-      this.isShowTags = false
-      this.isShowPhotos = true
-      this.$apply()
     }
 
     onLoad() {}
