@@ -1,19 +1,56 @@
 <style lang="scss">
   @import '../assets/style/_variables.scss';
 
+  %tag-item--selected {
+    display: inline-block;
+    padding: 10rpx 24rpx;
+    border: 1rpx solid $teal;
+    border-radius: 30rpx;
+    text-align: center;
+    margin-right: 20rpx;
+    margin-top: 20rpx;
+    font-size: 30rpx;
+    letter-spacing: 4rpx;
+    background: $white;
+    color: $teal;
+  }
+
   .tag {
     box-sizing: border-box;
     margin: 0;
     width: 100%;
     height: 100vh;
     background: $bg;
+    padding: 30rpx;    
 
-    .container {
-      padding: 30rpx;
+    &__cur {
+      margin-bottom: 50rpx;
 
       text {
-        display: block;
         font-size: 30rpx;
+        color: $font;
+      }
+
+      .content {
+        margin-top: 10rpx;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      &--selected {
+        @extend %tag-item--selected;
+      }
+
+      &--add {
+        @extend %tag-item--selected;
+        background: transparent;
+        color: $font;
+        border-style: dashed;
+        border-color: $edge;
+
+        input {
+          text-align: left;
+        }
       }
     }
   }
@@ -22,10 +59,17 @@
 
 <template>
   <view class="tag">
-    <view class="container">
-      <text>memeId: {{memeId}}</text>
-      <alltag :tags.sync="tags"></alltag>
+    <view class="tag__cur">
+      <text>已添加标签</text>
+      <view class="content">
+        <view class="tag__cur--selected" 
+          wx:for-items="{{tags}}" wx:for-item="item" wx:key="id">{{item.name}}</view>
+        <view class="tag__cur--add">
+          <input placeholder="添加标签"/>
+        </view>
+      </view>
     </view>
+    <alltag :tags.sync="tags"></alltag>
   </view>
 </template>
 
