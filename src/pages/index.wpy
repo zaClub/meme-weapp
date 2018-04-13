@@ -61,7 +61,14 @@
       }
     }
 
-    onLoad() {}
+    onLoad() {
+      // 获取个人信息
+      // this.$parent.getUserInfo(function (userInfo) {
+      //   if (userInfo) {
+      //     console.log('userinfo',userInfo)
+      //   }
+      // })
+    }
   }
 </script>
 
