@@ -80,29 +80,26 @@
       },
 
       tags: {
-        default: []
+        default: [],
+        twoWay: true
       }
     }
 
     methods = {
       //点击某个标签
       onTagTap: item => {
-        console.log('点击标签')
-        this.tagStatus(item.id)
-
-        //将选中的 tag 发射给父组件
-        this.$emit('onTagChange', item)
+        this.toggleStyle(item)
       },
       
     }
 
     //改变标签状态 (active:true 表示选中)
-    tagStatus(tagId) {
-      this.tags.map(el => {
-        if (el.id !== tagId) return el
-        el.active = !el.active
-        return el
-      })
+    toggleStyle(item) {
+      let index = this.tags.findIndex(el => el.name === item.name)
+      if(index !== -1) {
+        this.tags[index].active = !this.tags[index].active
+      }
+      this.$apply()
     }
 
     events = {

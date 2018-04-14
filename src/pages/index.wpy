@@ -17,8 +17,8 @@
 <template>
   <view class="home">
     <searchbar :disabled.sync="barDisabled"></searchbar>
+    <button @tap="testTag">测试编辑标签</button>
     <view class="container">
-
       <photowall></photowall>
     </view>
   </view>

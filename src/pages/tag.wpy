@@ -81,14 +81,20 @@
     <text>已添加标签</text>
     <view class="flex-wrapper">
       <view class="tag__cur" 
-        wx:for-items="{{tags}}" wx:for-item="item" wx:key="id">
+        wx:for-items="{{curTags}}" wx:for-item="item" wx:key="id" wx:for-index="idx"
+        @tap="onCurTagClick({{item.name}})">
         <view class="tag__text">{{item.name}}</view>  
       </view>
       <view class="tag__cur--add">
-        <input maxlength="8" placeholder="添加标签" adjust-position="true" @blur="onBlur"/>
+        <input maxlength="8" 
+          placeholder="添加标签" 
+          adjust-position="true" 
+          confirm-type="done"
+          @blur="onBlur"
+          @confirm="onConfirm"/>
       </view>
     </view>
-    <alltag :tags.sync="allTags"></alltag>
+    <alltag :tags.sync="tags"></alltag>
     <button>保存标签</button>
   </view>
 </template>
@@ -112,53 +118,55 @@
 
     //获取标签
     getTags() {
-      //模拟请求
+      //模拟获取标签
       setTimeout(() => {
-        this.allTags = [
-          { id: 1, name:'谢飞机很危险', active: false },
-          { id: 2, name:'宋民国', active: false },
-          { id: 3, name:'权律二', active: false },
-          { id: 4, name:'van', active: false },
-          { id: 5, name:'张学友', active: false }
-        ]
-        this.tags = [
-          { id: 2, name:'宋民国' },
-          { id: 3, name:'权律二' },
-        ]
+        let _allTags = ['谢飞机很危险','宋民国','权律二','van','张学友']
+        let _tags = ['宋民国','权律二']
+        _allTags.forEach(el => {
+          this.tags.push({ name: el, active: _tags.includes(el) ? true: false })
+        });
         this.$apply()
-      }, 500);
+      }, 200);
     }
 
     data = {
       memeId: '',
-      allTags: [
-
-      ],
-      tags: [
-
-      ]
-    }
-
-    props = {
-
+      tags: []
     }
 
     components = {
       alltag: AllTag
     }
 
-    events = {
-      onTagChange: item => {
-        //判断 item 的 active ，若为 true 则添加标签
-        //若为 false 则删除标签
+    computed = {
+      curTags() {
+        return this.tags.filter(el => el.active)
       }
     }
 
     methods = {
+      onCurTagClick: name => {
+        this.tags[this.tags.findIndex(el => el.name === name)].active = false
+        this.$apply()
+      },
+
       onBlur: event => {
         let value = event.detail.value ? event.detail.value : ''
-        console.log(value,/[^\x00-\xff]*/g.exec(value)[0].length)
+        if (value) {
+          let index = this.tags.findIndex(el => el.name === value)
+          if (index !== -1) {
+            this.tags[index].active = true
+          } else {
+            this.tags.push({ name: value, active: true })
+          }
+          event.detail.value = ''
+        }
+        this.$apply()
       },
+
+      onConfirm: event => {
+        this.onBlur(event)
+      }
     }
   }
 </script>
