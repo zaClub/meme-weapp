@@ -1,19 +1,70 @@
 <style lang="scss">
   @import '../assets/style/_variables.scss';
 
+  %photo-div {
+    width: 50%;
+    height: 100%;
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+  }
+
   .photo {
-    text {
+    box-sizing: border-box;
+
+    &__content {
+      height: 100%;
+    }
+
+    &__left {
+      @extend %photo-div;
+      padding-right: 10rpx;
+    }
+
+    &__right {
+      @extend %photo-div;
+      padding-left: 10rpx;
+    }
+
+    &__item {
+      width: 100%;
+      margin-bottom: 30rpx;
+
+      image {
+        width: 100%;
+        border-top-left-radius: 6rpx;
+        border-top-right-radius: 6rpx;
+        display: block;
+      }
+    }
+
+    &__tag {
+      background: $white;
+      padding: 20rpx;
+      border-bottom: 1rpx solid transparent;
+      border-left: 1rpx solid transparent;
+      border-right: 1rpx solid transparent;
+      border-bottom-left-radius: 6rpx;
+      border-bottom-right-radius: 6rpx;
       font-size: 30rpx;
       color: $font;
-      display: block;
     }
   }
 </style>
 
 <template>
   <view class="photo">
-    <text>Photo Wall Works !</text>
-    <text>query: {{query}}</text>
+    <view class="photo__content">
+      <view class="photo__left">
+        <view class="photo__item" @tap="previewImg">
+          <image mode="widthFix" src="{{photos[5].normal}}" lazy-load="true"/>
+          <view class="photo__tag">权律二、宋民国</view>
+        </view>
+      </view>
+      <view class="photo__right">
+
+      </view>
+    </view>
   </view>
 </template>
 
@@ -22,17 +73,34 @@
   import Toast from 'wepy-com-toast'
 
   export default class PhotoWall extends wepy.component {
-    data = {
-      photos : [
 
-      ]
+    onLoad() {
+
     }
 
-    // watcher = {
-    //   query: (newValue, oldValue) => {
+    data = {
+      photos: [
+        { id: 0, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-01.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg'},
+        { id: 1, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-02.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/02.jpg'},
+        { id: 2, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-04.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/04.jpg'},
+        { id: 3, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-05.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/05.jpg'},
+        { id: 4, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-06.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/06.jpg'},
+        { id: 5, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-07.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/07.jpg'},
+        { id: 6, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-08.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/08.jpg'},
+        { id: 7, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-09.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/09.jpg'},
+        { id: 8, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg'},
+        { id: 9, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg'},
+      ],
+    }
 
-    //   }
-    // }
+    methods = {
+      previewImg() {
+        wx.previewImage({
+          current: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg',
+          urls: ['http://os5w1n6kc.bkt.clouddn.com/01.jpg']
+        })
+      }
+    }
 
     props = {
       query: {

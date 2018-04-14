@@ -14,6 +14,9 @@
     font-size: 30rpx;
     letter-spacing: 4rpx;
     color: $font;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .alltag {
@@ -45,11 +48,11 @@
 
 <template>
   <view class="alltag">
-    <text>所有标签</text>
+    <text wx:if="{{tags.length > 0}}">所有标签</text>
     <view class="content">
       <view wx:for-items="{{tags}}" wx:for-item="item" wx:key="id"
         class="{{(item.active && !forSearch) ? 'alltag__item--selected':'alltag__item'}}"
-        @tap="onTagTap({{item.id}})">
+        @tap="onTagTap({{item}})">
         <view class="alltag__text">{{item.name}}</view>
       </view>
     </view>
@@ -83,12 +86,12 @@
 
     methods = {
       //点击某个标签
-      onTagTap(tagId) {
+      onTagTap: item => {
         console.log('点击标签')
-        this.tagStatus(tagId)
+        this.tagStatus(item.id)
 
         //将选中的 tag 发射给父组件
-        this.$emit('onTagChange', this.tags.filter(el => el.active))
+        this.$emit('onTagChange', item)
       },
       
     }

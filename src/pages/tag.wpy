@@ -14,6 +14,9 @@
     letter-spacing: 4rpx;
     background: $white;
     color: $teal;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .tag {
@@ -27,6 +30,17 @@
     text {
       font-size: 30rpx;
       color: $font;
+    }
+
+    button {
+      color: $white;
+      background: $teal;
+      margin-top: 70rpx;
+
+      &:active {
+        background: $teal-click;
+        color: $white-click;
+      }
     }
 
     .flex-wrapper {
@@ -51,10 +65,11 @@
 
       input {
         text-align: left;
-        font-size: 30rpx;
+        font-size: 28rpx;
         letter-spacing: 0;
         text-align: center;
         width: 145rpx;
+        height: 28rpx;
       }
     }
   }
@@ -70,10 +85,11 @@
         <view class="tag__text">{{item.name}}</view>  
       </view>
       <view class="tag__cur--add">
-        <input maxlength="8" placeholder="添加标签" adjust-position="true"/>
+        <input maxlength="8" placeholder="添加标签" adjust-position="true" @blur="onBlur"/>
       </view>
     </view>
-    <alltag :tags.sync="tags"></alltag>
+    <alltag :tags.sync="allTags"></alltag>
+    <button>保存标签</button>
   </view>
 </template>
 
@@ -90,17 +106,37 @@
       //TODO: id 判空
       this.memeId = option.id
       this.$apply()
+
+      this.getTags()
+    }
+
+    //获取标签
+    getTags() {
+      //模拟请求
+      setTimeout(() => {
+        this.allTags = [
+          { id: 1, name:'谢飞机很危险', active: false },
+          { id: 2, name:'宋民国', active: false },
+          { id: 3, name:'权律二', active: false },
+          { id: 4, name:'van', active: false },
+          { id: 5, name:'张学友', active: false }
+        ]
+        this.tags = [
+          { id: 2, name:'宋民国' },
+          { id: 3, name:'权律二' },
+        ]
+        this.$apply()
+      }, 500);
     }
 
     data = {
       memeId: '',
-      tags: [
-        { id: 1, name:'未标记', active: false },
-        { id: 2, name:'宋民国', active: false },
-        { id: 3, name:'权律二', active: false },
-        { id: 4, name:'van', active: false },
-        { id: 5, name:'张学友', active: false }
+      allTags: [
+
       ],
+      tags: [
+
+      ]
     }
 
     props = {
@@ -109,6 +145,20 @@
 
     components = {
       alltag: AllTag
+    }
+
+    events = {
+      onTagChange: item => {
+        //判断 item 的 active ，若为 true 则添加标签
+        //若为 false 则删除标签
+      }
+    }
+
+    methods = {
+      onBlur: event => {
+        let value = event.detail.value ? event.detail.value : ''
+        console.log(value,/[^\x00-\xff]*/g.exec(value)[0].length)
+      },
     }
   }
 </script>
