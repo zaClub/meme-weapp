@@ -96,8 +96,11 @@
     //改变标签状态 (active:true 表示选中)
     toggleStyle(item) {
       let index = this.tags.findIndex(el => el.name === item.name)
+      let len = this.tags.length
+
       if(index !== -1) {
         this.tags[index].active = !this.tags[index].active
+        this.tags[index].sort = this.tags[len-1].sort +1
       }
       this.$apply()
     }

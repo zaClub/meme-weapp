@@ -122,8 +122,8 @@
       setTimeout(() => {
         let _allTags = ['谢飞机很危险','宋民国','权律二','van','张学友']
         let _tags = ['宋民国','权律二']
-        _allTags.forEach(el => {
-          this.tags.push({ name: el, active: _tags.includes(el) ? true: false })
+        _allTags.forEach((el, idx) => {
+          this.tags.push({ name: el, active: _tags.includes(el) ? true: false, sort: idx })
         });
         this.$apply()
       }, 200);
@@ -140,7 +140,7 @@
 
     computed = {
       curTags() {
-        return this.tags.filter(el => el.active)
+        return this.tags.filter(el => el.active).sort((a, b) => a.sort - b.sort)
       }
     }
 
@@ -157,7 +157,8 @@
           if (index !== -1) {
             this.tags[index].active = true
           } else {
-            this.tags.push({ name: value, active: true })
+            let len = this.tags.length
+            this.tags.push({ name: value, active: true, sort: len > 0 ? this.tags[len-1].sort+1 : 0})
           }
           event.detail.value = ''
         }
