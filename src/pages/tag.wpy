@@ -96,13 +96,16 @@
       </view>
     </view>
     <alltag :tags.sync="tags"></alltag>
-    <button>保存标签</button>
+    <button @tap="onSaveTags">保存标签</button>
   </view>
+  <toast></toast>
 </template>
 
 <script>
   import wepy from 'wepy'
   import AllTag from '@/components/all-tag'
+  import Toast from 'wepy-com-toast'
+  import Base64 from '../assets/icon/base64'
 
   export default class Tag extends wepy.page {
     
@@ -130,6 +133,7 @@
       }, 200);
     }
 
+    mixins = [Base64]
     data = {
       memeId: '',
       tags: [],
@@ -137,7 +141,8 @@
     }
 
     components = {
-      alltag: AllTag
+      alltag: AllTag,
+      toast: Toast
     }
 
     computed = {
@@ -174,8 +179,15 @@
         this.$apply()
       },
 
+      //输入标签完成按钮
       onConfirm: event => {
         this.onBlur(event)
+      },
+
+      //保存标签
+      onSaveTags: event => {
+        this.showToast('成功', 'success')
+      
       }
     }
 
@@ -192,6 +204,21 @@
         }
         this.$apply()
       }
+    }
+
+    showToast(title, type) {
+      if (!title) return
+      let img = ''
+      switch (type) {
+        case 'success':
+          img = this.successIcon
+          break;
+        case 'fail':
+        default:
+          img = this.failIcon
+          break;
+      }
+      this.$invoke('toast', 'show', { title, img })
     }
   }
 </script>
