@@ -91,6 +91,7 @@
           adjust-position="true" 
           confirm-type="done"
           @blur="onBlur"
+          value="{{inputValue}}"
           @confirm="onConfirm"/>
       </view>
     </view>
@@ -131,7 +132,8 @@
 
     data = {
       memeId: '',
-      tags: []
+      tags: [],
+      inputValue: ''
     }
 
     components = {
@@ -145,28 +147,48 @@
     }
 
     methods = {
+      //点击 [当前标签] 数组，删除某个标签
       onCurTagClick: name => {
         this.tags[this.tags.findIndex(el => el.name === name)].active = false
         this.$apply()
       },
 
+      //以输入的方式添加新标签
       onBlur: event => {
         let value = event.detail.value ? event.detail.value : ''
         if (value) {
           let index = this.tags.findIndex(el => el.name === value)
+          let len = this.curTags.length
+
+          // 需要添加到当前标签的 sort，置为当前标签数组中最大的
           if (index !== -1) {
             this.tags[index].active = true
+            this.tags[index].sort = len > 0 ? this.curTags[len-1].sort+1 : 0
           } else {
-            let len = this.tags.length
-            this.tags.push({ name: value, active: true, sort: len > 0 ? this.tags[len-1].sort+1 : 0})
+            this.tags.push({ name: value, active: true, sort: len > 0 ? this.curTags[len-1].sort+1 : 0})
           }
-          event.detail.value = ''
+          this.inputValue = ''
         }
         this.$apply()
       },
 
       onConfirm: event => {
         this.onBlur(event)
+      }
+    }
+
+    events = {
+      //切换 [所有标签] 的状态
+      toggleStyle: item => {
+        let index = this.tags.findIndex(el => el.name === item.name)
+        let len = this.curTags.length
+
+        // 需要添加到当前标签的 sort，置为当前标签数组中最大的
+        if(index !== -1) {
+          this.tags[index].active = !this.tags[index].active
+          this.tags[index].sort = len > 0 ? this.curTags[len-1].sort +1 : 0
+        }
+        this.$apply()
       }
     }
   }
