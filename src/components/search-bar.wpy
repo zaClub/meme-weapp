@@ -33,7 +33,7 @@
   <view class="searchbar">
     <view class="searchbar__panel">
       <input placeholder="按标签关键字搜索" 
-        focus="{{!disabled}}"
+        focus="{{focus}}"
         value="{{query}}"
         disabled="{{disabled}}"
         confirm-type="search" 
@@ -58,6 +58,10 @@
         twoWay: true
       },
       disabled: {
+        type: Boolean,
+        default: false
+      },
+      focus: {
         type: Boolean,
         default: false
       }

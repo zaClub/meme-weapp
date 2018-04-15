@@ -52,7 +52,7 @@
     <view class="content">
       <view wx:for-items="{{tags}}" wx:for-item="item" wx:key="id"
         class="{{(item.active && !forSearch) ? 'alltag__item--selected':'alltag__item'}}"
-        @tap="onTagTap({{item}})">
+        @tap="onToggle({{item}})">
         <view class="alltag__text">{{item.name}}</view>
       </view>
     </view>
@@ -86,16 +86,14 @@
     }
 
     methods = {
-      //点击某个标签
-      onTagTap: item => {
-        this.toggleStyle(item)
-      },
       
-    }
+      onToggle: item => {
+        //改变标签状态 (tag.wpy)
+        this.$emit('toggleStyle', item)
 
-    //改变标签状态 (active:true 表示选中)
-    toggleStyle(item) {
-      this.$emit('toggleStyle', item)
+        //给搜索页面发射选中的标签 (search.wpy)
+        this.$emit('onTagSelected', item)
+      },
     }
 
     events = {

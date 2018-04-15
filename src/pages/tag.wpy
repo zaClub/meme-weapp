@@ -162,8 +162,10 @@
 
           // 需要添加到当前标签的 sort，置为当前标签数组中最大的
           if (index !== -1) {
-            this.tags[index].active = true
-            this.tags[index].sort = len > 0 ? this.curTags[len-1].sort+1 : 0
+            if (this.tags[index].active === false) {
+              this.tags[index].active = true
+              this.tags[index].sort = len > 0 ? this.curTags[len-1].sort+1 : 0
+            }
           } else {
             this.tags.push({ name: value, active: true, sort: len > 0 ? this.curTags[len-1].sort+1 : 0})
           }

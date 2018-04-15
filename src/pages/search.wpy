@@ -16,7 +16,7 @@
 
 <template>
   <view class="search">
-    <searchbar :query.sync="query"></searchbar>
+    <searchbar :query.sync="query" :focus="focus"></searchbar>
     <view class="container">
       <alltag wx:if="{{isShowTags}}" :forSearch.sync="forSearch" :tags.sync="tags"></alltag>
       <photowall wx:if="{{isShowPhotos}}" :query.sync="query"></photowall>
@@ -37,13 +37,14 @@
       isShowPhotos: false,
       isShowTags: true,
       forSearch: true,
+      focus: true,
 
       tags: [
-        { id: 1, name:'未标记', active: false },
-        { id: 2, name:'宋民国', active: false },
-        { id: 3, name:'权律二', active: false },
-        { id: 4, name:'van', active: false },
-        { id: 5, name:'张学友', active: false }
+        { name:'谢飞机很危险', active: false },
+        { name:'宋民国', active: false },
+        { name:'权律二', active: false },
+        { name:'van', active: false },
+        { name:'张学友', active: false }
       ],
     }
 
@@ -77,12 +78,8 @@
       },
 
       //接收已选中的标签
-      onTagChange: (tags) => {
-        let str = ''
-        for (let el of tags) {
-          str += el.name
-        }
-        this.query = str
+      onTagSelected: (tag) => {
+        this.query = tag.name ? tag.name : ''
         this.$apply()
         this.showPhotoWall()
       },
