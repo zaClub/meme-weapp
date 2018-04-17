@@ -5,7 +5,8 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-
+import { LOGIN, UPLOAD } from './constant/api'
+import zajax from './util/zajax'
 
 export default class extends wepy.app {
   config = {
@@ -33,6 +34,9 @@ export default class extends wepy.app {
 
   onLaunch() {
     this.testAsync()
+
+    this.login()
+    this.testUpload()
   }
 
   sleep (s) {
@@ -58,6 +62,85 @@ export default class extends wepy.app {
         that.globalData.userInfo = res.userInfo
         cb && cb(res.userInfo)
       }
+    })
+  }
+
+  testUpload() {
+    wx.chooseImage({
+      count: 1, // 默认9
+      sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success: function (res) {
+        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+        var data = {
+          paths: res.tempFilePaths
+        }
+
+        zajax
+          .upload(UPLOAD, data)
+          .then(console.log)
+      }
+    })
+
+  }
+
+  async login() {
+    
+    let code = await this.wxLogin()
+
+    let userInfo = await this.wxGetUserInfo()
+
+    // console.log(code, userInfo)
+
+    zajax
+      .post(LOGIN, {
+          code,
+          userInfo
+        })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(e => {
+        console.log('fuck')
+        console.error(e)
+      })
+  }
+
+  // 封装微信的 login 方法，返回 js_code
+  wxLogin() {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: res => {
+          if (res.code) {
+            resolve(res.code)
+          } else {
+            reject(res.errMsg)
+          }
+        },
+        fail: _ => reject(_) // 接口文档没说回调函数参数是啥
+      })
+    })
+    .then(res => {
+      return res
+    })
+    .catch(errMsg => {
+      console.log('登录失败！' + errMsg || '')
+    })
+  }
+
+  // 封装微信的 getUserInfo 方法，返回 userInfo
+  wxGetUserInfo() {
+    return new Promise((resolve, reject) => {
+      wx.getUserInfo({
+        success: res => resolve(res),
+        fail: err => reject(err) // 接口文档没说回调函数参数是啥
+      })
+    })
+    .then(res => {
+      return res
+    })
+    .catch(err => {
+      console.log('获取用户信息失败！' + err || '')
     })
   }
 }
