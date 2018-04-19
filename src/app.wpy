@@ -29,14 +29,14 @@ export default class extends wepy.app {
 
   constructor () {
     super()
-    this.use('requestfix')
+    // this.use('requestfix')
   }
 
   onLaunch() {
-    this.testAsync()
+    // this.testAsync()
 
-    this.login()
-    this.testUpload()
+    // this.login()
+    // this.testUpload()
   }
 
   sleep (s) {

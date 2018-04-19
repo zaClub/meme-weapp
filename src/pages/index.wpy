@@ -7,20 +7,13 @@
     width: 100%;
     height: 100%;
     background: $bg;
-
-    .container {
-      padding: 30rpx;
-    }
   }
 </style>
 
 <template>
   <view class="home">
     <searchbar :disabled.sync="barDisabled"></searchbar>
-    <button @tap="testTag">测试编辑标签</button>
-    <view class="container">
-      <photowall></photowall>
-    </view>
+    <photowall></photowall>
   </view>
 </template>
 

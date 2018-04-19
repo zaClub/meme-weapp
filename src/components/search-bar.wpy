@@ -30,7 +30,7 @@
 </style>
 
 <template>
-  <view class="searchbar">
+  <view class="searchbar" style="height: 100rpx">
     <view class="searchbar__panel">
       <input placeholder="按标签关键字搜索" 
         focus="{{focus}}"
@@ -51,6 +51,17 @@
   import Toast from 'wepy-com-toast'
 
   export default class SearchBar extends wepy.component {
+
+    onLoad() {
+      console.log('search-bar onload')
+      wx.getSystemInfo({
+        success: resp => {
+          this.height = resp.windowHeight * 0.1
+          this.$apply()
+        }
+      })
+    }
+
     props = {
       query: {
         type: String,
@@ -65,6 +76,10 @@
         type: Boolean,
         default: false
       }
+    }
+
+    data = {
+      height: 0
     }
 
     components = {
@@ -111,8 +126,6 @@
         promise.then(fb => {})
       },
     }
-
-    onLoad() { console.log(this.$name,'onLoad()') }
   }
 </script>
 

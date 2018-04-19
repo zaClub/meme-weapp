@@ -1,0 +1,80 @@
+<template>
+  <view>
+    <image style="width:0;height:0;opacity:0" 
+      wx:for-items="{{imgLoadlist}}" wx:key="id" wx:for-item="item"
+      src="{{item}}" data-src="{{item}}"
+      bindload="onImageLoad" binderror="onImageError"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class ImgLoad extends wepy.component {
+    
+    onLoad(){
+      this.imgLoadlist = [],
+      this.imgInfo = {}
+    }
+
+    data = {
+      msg: {
+        success: 'success',
+        fail: 'fail'
+      },
+      imgLoadlist: [],  //加载队列
+      imgInfo: {},      //加载完成的图片信息
+    }
+
+    methods = {
+      onImageLoad: event => {
+        let src = event.currentTarget.dataset.src,
+          width = event.detail.width,
+          height = event.detail.height
+
+        //记录下已经加载成功的图片信息
+        this.imgInfo[src] = { width, height }
+        this.removeFromLoadlist(src)
+        this.loaded(this.msg.success, src)
+        this.$apply()
+        // console.log(JSON.stringify(this.imgInfo))
+      },
+
+      onImageError: event => {
+        let src = event.currentTarget.dataset.src
+        this.removeFromLoadlist(src)
+        this.loaded(this.msg.fail, src)
+        this.$apply()
+      },
+
+      load: (args) => {
+        let list = this.imgLoadlist
+        for (let item of args) {
+          let src = item.src
+          //已被成功加载的
+          if (this.imgInfo[src]) {
+            this.loaded(this.msg.success, src)
+          } else {
+            list.push(src)
+          }
+        }
+        this.$apply()
+      }
+    }
+
+    //图片加载完成回调
+    loaded(msg, src) {
+      if (!src) return
+      this.$emit('onLoaded', msg, src)
+    }
+
+    //将已加载的图片从加载队列中移除
+    removeFromLoadlist(src) {
+      if(!src) return
+      let list = this.imgLoadlist
+      list.splice(list.indexOf(src),1)
+      this.$apply()
+    }
+  }
+</script>
+
+
