@@ -8,9 +8,9 @@
   }
 
   @keyframes fadeIn {
-    0% { opacity: 0; }
-    50% { opacity: 0.2; }
-    100% { opacity: 1; }
+    0% { opacity: 0; background: #455a64 }
+    50% { opacity: 0.2; background: #607d8b }
+    100% { opacity: 1; background: #eaeaea}
   }
 
   .photo {
@@ -100,11 +100,19 @@
   export default class PhotoWall extends wepy.component {
 
     onLoad() {
+      this.init()     //初始化数据
+    }
+
+    init() {
       //获取窗口信息并设置尺寸信息
       wx.getSystemInfo({
         success: resp => {
           //计算滚动视图的高度，相当于 100vh - 100rpx
           this.scrollHeight = resp.windowHeight - (resp.windowWidth / 750) * 100
+
+          //设置两列的初始高度
+          this.col1H = 0
+          this.col2H = 0
 
           //设置内边距 rpx
           this.contentPdLeft = 20
@@ -126,12 +134,13 @@
         }
       })
 
-      this.images = this.getImages()
-      console.log(JSON.stringify(this.images))
       //初始状态先获取一次
-      setTimeout(() => {
-        this.$invoke('imgload','load',this.images.map(el => ({ src: el.normal })))
-      }, 0);
+      let images = this.getImages()
+      this.images[this.imgArrKey] = images
+      this.setImageToFalls(images)
+      this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+      this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
+      this.$apply()
     }
 
     getImages() {
@@ -142,20 +151,28 @@
       imgload: ImgLoad
     }
 
+    props = {
+      query: {
+        type: String,
+        default: '',
+      }
+    }
+
     data = {
       photos: [
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-01.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg', loaded: false, width: 394, height: 392 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-02.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/02.jpg', loaded: false, width: 1440, height: 1080 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-04.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/04.jpg', loaded: false, width: 564, height: 564 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-05.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/05.jpg', loaded: false, width: 894, height: 894 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-06.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/06.jpg', loaded: false, width: 1200, height: 800 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-07.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/07.jpg', loaded: false, width: 1080, height: 1080 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-08.png', normal: 'http://os5w1n6kc.bkt.clouddn.com/08.png', loaded: false, width: 537, height: 453 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-09.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/09.jpg', loaded: false, width: 1000, height: 667 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959 },
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg', loaded: false, width: 800, height: 533 },
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959, sort: 8},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg', loaded: false, width: 800, height: 533, sort: 9},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-01.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg', loaded: false, width: 394, height: 392, sort: 0},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-02.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/02.jpg', loaded: false, width: 1440, height: 1080, sort: 1},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-04.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/04.jpg', loaded: false, width: 564, height: 564, sort: 2},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-05.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/05.jpg', loaded: false, width: 894, height: 894, sort: 3},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-06.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/06.jpg', loaded: false, width: 1200, height: 800, sort: 4},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-07.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/07.jpg', loaded: false, width: 1080, height: 1080, sort: 5},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-08.png', normal: 'http://os5w1n6kc.bkt.clouddn.com/08.png', loaded: false, width: 537, height: 453, sort: 6},
+        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-09.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/09.jpg', loaded: false, width: 1000, height: 667, sort: 7},
       ],
-      images: [],       //临时数组，存储每次获取的图片
+      imgArrKey: '0',
+      images: {},       //每次获取的图片都放进来
       leftPhotos: [],
       rightPhotos: [],
 
@@ -172,24 +189,14 @@
 
     events = {
       //处理加载完成的图片
-      onLoaded: (msg, src) => {
+      onLoaded: (msg, src, arrKey) => {
         switch (msg) {
           case 'success':
-
-            let list = this.images
+            console.log(arrKey)
+            let list = this.images[arrKey]
+            console.log(this.images)
             let index = list.findIndex(el => el.normal === src)
-            let adaptHeight = this.adaptWidth * (list[index].height / list[index].width)
-            list[index].adaptHeight = adaptHeight
             list[index].loaded = true
-
-            if (this.col1H <= this.col2H) {
-              this.col1H += list[index].adaptHeight + this.tagHeight
-              this.leftPhotos.push(list[index])
-            } else {
-              this.col2H += list[index].adaptHeight + this.tagHeight
-              this.rightPhotos.push(list[index])
-            }
-
             this.$apply()
             break;
           case 'fail':
@@ -203,18 +210,31 @@
     methods = {
       //处理 scroll 到底事件
       onScrollToLower: event => {
-        this.images = this.getImages()
+        let images = this.getImages()
+        this.images[this.imgArrKey] = images
+        this.setImageToFalls(images)
+        this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+        this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
         this.$apply()
-        this.$invoke('imgload','load',this.images.map(el => ({ src: el.normal })))
       }
     }
 
-    props = {
-      query: {
-        type: String,
-        default: '',
-      }
+    //图片加载之前将图片插入瀑布流，即设置高度以及该放置的列
+    setImageToFalls(images) {
+      images.sort((a,b) => a.sort - b.sort)
+      images.map(el => {
+        el.adaptHeight = this.adaptWidth * (el.height / el.width)
+        if (this.col1H <= this.col2H) {
+          this.col1H += el.adaptHeight + this.tagHeight
+          this.leftPhotos.push(el)
+        } else {
+          this.col2H += el.adaptHeight + this.tagHeight
+          this.rightPhotos.push(el)
+        }
+      })
+      this.$apply()
     }
+
   }
 </script>
 

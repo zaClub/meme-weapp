@@ -2,7 +2,7 @@
   <view>
     <image style="width:0;height:0;opacity:0" 
       wx:for-items="{{imgLoadlist}}" wx:key="id" wx:for-item="item"
-      src="{{item}}" data-src="{{item}}"
+      src="{{item.src}}" data-src="{{item.src}}" data-key="{{item.arrKey}}"
       bindload="onImageLoad" binderror="onImageError"/>
   </view>
 </template>
@@ -11,7 +11,11 @@
   import wepy from 'wepy'
   export default class ImgLoad extends wepy.component {
     
-    onLoad(){
+    onLoad() {
+      this.init()
+    }
+
+    init() {
       this.imgLoadlist = [],
       this.imgInfo = {}
     }
@@ -28,21 +32,23 @@
     methods = {
       onImageLoad: event => {
         let src = event.currentTarget.dataset.src,
+          arrKey = event.currentTarget.dataset.key,
           width = event.detail.width,
           height = event.detail.height
 
         //记录下已经加载成功的图片信息
         this.imgInfo[src] = { width, height }
         this.removeFromLoadlist(src)
-        this.loaded(this.msg.success, src)
+        this.loaded(this.msg.success, src, arrKey)
         this.$apply()
         // console.log(JSON.stringify(this.imgInfo))
       },
 
       onImageError: event => {
-        let src = event.currentTarget.dataset.src
+        let src = event.currentTarget.dataset.src,
+          arrKey = event.currentTarget.dataset.arrKey
         this.removeFromLoadlist(src)
-        this.loaded(this.msg.fail, src)
+        this.loaded(this.msg.fail, src, arrKey)
         this.$apply()
       },
 
@@ -50,11 +56,12 @@
         let list = this.imgLoadlist
         for (let item of args) {
           let src = item.src
+          let arrKey = item.arrKey
           //已被成功加载的
           if (this.imgInfo[src]) {
-            this.loaded(this.msg.success, src)
+            this.loaded(this.msg.success, src, arrKey)
           } else {
-            list.push(src)
+            list.push(item)
           }
         }
         this.$apply()
@@ -62,16 +69,16 @@
     }
 
     //图片加载完成回调
-    loaded(msg, src) {
+    loaded(msg, src, arrKey) {
       if (!src) return
-      this.$emit('onLoaded', msg, src)
+      this.$emit('onLoaded', msg, src, arrKey)
     }
 
     //将已加载的图片从加载队列中移除
     removeFromLoadlist(src) {
       if(!src) return
       let list = this.imgLoadlist
-      list.splice(list.indexOf(src),1)
+      list.splice(list.indexOf(src), 1)
       this.$apply()
     }
   }
