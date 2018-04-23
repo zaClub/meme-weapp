@@ -83,14 +83,16 @@
       bindscrolltolower="onScrollToLower">
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" @tap="onPreviewImage({{photo.normal}})"/>
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" @tap="onPreviewImage({{photo.normal}})"/>
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
@@ -123,10 +125,10 @@
           this.col2H = 0
 
           //设置内边距 rpx
-          this.contentPdLeft = 20
-          this.contentPdRight = 20
-          this.colPdLeft = 10
-          this.colPdRight = 10
+          this.contentPdLeft = 30
+          this.contentPdRight = 30
+          this.colPdLeft = 15
+          this.colPdRight = 15
 
           //计算图片自适应宽度 rpx
           this.adaptWidth = ( 750 - (
@@ -228,11 +230,19 @@
       },
       //预览图片
       onPreviewImage: event => {
+        if (this.lock) return
         let src = event ? event: ''
         wx.previewImage({
           current: src,
           urls: [src]
         })
+      },
+      //长按图片进行更多操作
+      onLongpressImage: event => {
+        console.log('onLongpressImage')
+      },
+      onTouchEnd: event => {
+        console.log('onTouchEnd')
       }
     }
 
