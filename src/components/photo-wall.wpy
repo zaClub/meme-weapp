@@ -37,7 +37,8 @@
       width: 100%;
       box-sizing: border-box;
       margin-bottom: 30rpx;
-      animation: fadeIn 1s linear;
+      animation: fadeIn 1s ease;
+      position: relative;
     }
 
     &__img {
@@ -45,13 +46,17 @@
       border-top-left-radius: 6rpx;
       border-top-right-radius: 6rpx;
       display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
-    &__img--loaded {
+    &__img--bg {
       width: 100%;
+      z-index: -1024;
       border-top-left-radius: 6rpx;
       border-top-right-radius: 6rpx;
-      display: block;
+      background: gray;
     }
 
     &__tag {
@@ -66,6 +71,7 @@
       border-bottom-right-radius: 6rpx;
       font-size: 30rpx;
       color: $font;
+      width: 100%;
     }
   }
 </style>
@@ -78,13 +84,15 @@
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx"/>
-          <view wx:if="{{photo.loaded}}" class="photo__tag" style="height: {{tagHeight}}rpx;line-height:{{tagHeight}}rpx">权律二、宋民国</view>
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx"/>
-          <view wx:if="{{photo.loaded}}" class="photo__tag" style="height: {{tagHeight}}rpx;line-height:{{tagHeight}}rpx">权律二、宋民国</view>
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
     </scroll-view>
@@ -192,9 +200,9 @@
       onLoaded: (msg, src, arrKey) => {
         switch (msg) {
           case 'success':
-            console.log(arrKey)
+            // console.log(arrKey)
             let list = this.images[arrKey]
-            console.log(this.images)
+            // console.log(this.images)
             let index = list.findIndex(el => el.normal === src)
             list[index].loaded = true
             this.$apply()
@@ -221,17 +229,20 @@
 
     //图片加载之前将图片插入瀑布流，即设置高度以及该放置的列
     setImageToFalls(images) {
+      let left = [],right = []
       images.sort((a,b) => a.sort - b.sort)
-      images.map(el => {
+      for (let el of images) {
         el.adaptHeight = this.adaptWidth * (el.height / el.width)
         if (this.col1H <= this.col2H) {
           this.col1H += el.adaptHeight + this.tagHeight
-          this.leftPhotos.push(el)
+          left.push(el)
         } else {
           this.col2H += el.adaptHeight + this.tagHeight
-          this.rightPhotos.push(el)
+          right.push(el)
         }
-      })
+      }
+      this.leftPhotos = this.leftPhotos.concat(left)
+      this.rightPhotos = this.rightPhotos.concat(right)
       this.$apply()
     }
 
