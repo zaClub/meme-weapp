@@ -78,19 +78,19 @@
 
 <template>
   <view class="photo" style="height: {{scrollHeight}}px">
-    <scroll-view class="photo__content" scroll-y="true" lower-threshold="100" 
+    <scroll-view class="photo__content" scroll-y="true" lower-threshold="50" 
       style="padding-left: {{contentPdLeft}}rpx;padding-right: {{contentPdRight}}rpx;"
       bindscrolltolower="onScrollToLower">
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx"/>
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" @tap="onPreviewImage({{photo.normal}})"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx"/>
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" @tap="onPreviewImage({{photo.normal}})"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
@@ -218,12 +218,21 @@
     methods = {
       //处理 scroll 到底事件
       onScrollToLower: event => {
+        console.log('触底')
         let images = this.getImages()
         this.images[this.imgArrKey] = images
         this.setImageToFalls(images)
         this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
         this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
         this.$apply()
+      },
+      //预览图片
+      onPreviewImage: event => {
+        let src = event ? event: ''
+        wx.previewImage({
+          current: src,
+          urls: [src]
+        })
       }
     }
 
