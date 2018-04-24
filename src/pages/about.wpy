@@ -1,0 +1,21 @@
+<style lang="scss">
+  .about {
+    padding: 30rpx;
+  }
+</style>
+
+<template>
+  <view class="about">
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class About extends wepy.page {
+  
+}
+</script>
+
+

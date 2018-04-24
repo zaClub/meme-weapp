@@ -1,0 +1,98 @@
+<style lang="scss">
+  @import '../assets/style/_variables.scss';
+
+  .upload {
+    padding-left: 30rpx;
+    padding-top: 30rpx;
+
+    .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    &__item {
+      width: 150rpx;
+      height: 150rpx;
+      background: $upload-btn;
+      margin-bottom: 30rpx;
+      margin-right: 30rpx;
+      border-radius: 6rpx;
+      position: relative;
+    }
+
+    &__img {
+      display: block;
+      border-radius: 6rpx;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__plus {
+      width: 6rpx;
+      height: 50rpx;
+      background: $upload-plus;
+      margin: 0 auto;
+      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      &::after {
+        background: $upload-plus;
+        content: "";
+        height: 6rpx;
+        width: 50rpx;
+        left: -22rpx;
+        position: absolute;
+        top: 22rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="upload">
+    <view class="wrapper">
+      <view wx:for-items="{{uploadList}}" wx:for-item="item" wx:key="id" class="upload__item">
+        <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+      </view>
+      <view class="upload__item" @tap="chooseImage">
+        <view class="upload__plus"></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Upload extends wepy.page {
+    onLoad() {
+    }
+
+    data = {
+      uploadList: [
+
+      ],
+    }
+
+    methods = {
+      chooseImage: event => {
+        wx.chooseImage({
+          count: 9,
+          sizeType: ['compressed'],
+          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+          success: res => {
+            // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+            let tempFilePaths = res.tempFilePaths
+            this.uploadList = this.uploadList.concat(tempFilePaths)
+            console.log(this.uploadList)
+            this.$apply()
+          }
+        })
+      }
+    }
+  }
+</script>
+
+
