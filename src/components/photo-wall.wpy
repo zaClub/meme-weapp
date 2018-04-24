@@ -149,7 +149,7 @@
       let images = this.getImages()
       this.images[this.imgArrKey] = images
       this.setImageToFalls(images)
-      // this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+      this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
       this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
       this.$apply()
     }
@@ -234,7 +234,7 @@
         let images = this.getImages()
         this.images[this.imgArrKey] = images
         this.setImageToFalls(images)
-        // this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+        this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
         this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
         this.$apply()
       },
