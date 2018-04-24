@@ -20,6 +20,17 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#009688',
       navigationBarTitleText: 'Meme',
       navigationBarTextStyle: 'white'
+    },
+    tabBar: {
+      color: '#868686',
+      selectedColor: '#009688',
+      borderStyle: 'white',
+      position: 'bottom',
+      list: [
+        { pagePath: 'pages/index', text: '主页' },
+        { pagePath: 'pages/search', text: '搜索' },
+        { pagePath: 'pages/tag', text: '标签' },
+      ]
     }
   }
 
