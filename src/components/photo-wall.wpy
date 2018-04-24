@@ -84,16 +84,16 @@
       bindscrolltolower="onScrollToLower">
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
-          <!-- <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/> -->
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
-          <!-- <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/> -->
+          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
@@ -107,6 +107,7 @@
   import wepy from 'wepy'
   import Toast from 'wepy-com-toast'
   import ImgLoad from './img-load'
+  import MLog from '../mixins/mlog'
 
   export default class PhotoWall extends wepy.component {
 
@@ -169,6 +170,8 @@
       }
     }
 
+    mixins = [MLog]
+
     data = {
       photos: [
         { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959, sort: 8},
@@ -205,15 +208,15 @@
       onLoaded: (msg, src, arrKey) => {
         switch (msg) {
           case 'success':
-            // console.log(arrKey)
+            // this.print(arrKey)
             let list = this.images[arrKey]
-            // console.log(this.images)
+            // this.print(this.images)
             let index = list.findIndex(el => el.normal === src)
             list[index].loaded = true
             this.$apply()
             break;
           case 'fail':
-            console.log(msg)
+            this.print(msg)
             this.$apply()
             break;
         }
@@ -228,9 +231,9 @@
         setTimeout(() => {
           this.scrollLock = false
           this.$apply()
-        }, 2000);
+        }, 1000);
 
-        console.log('触底')
+        this.print('触底')
         let images = this.getImages()
         this.images[this.imgArrKey] = images
         this.setImageToFalls(images)
@@ -248,10 +251,10 @@
       },
       //长按图片进行更多操作
       onLongpressImage: event => {
-        console.log('onLongpressImage')
+        this.print('onLongpressImage')
       },
       onTouchEnd: event => {
-        console.log('onTouchEnd')
+        this.print('onTouchEnd')
       }
     }
 
@@ -272,7 +275,7 @@
       this.leftPhotos = this.leftPhotos.concat(left)
       this.rightPhotos = this.rightPhotos.concat(right)
       this.$apply()
-      console.log('赋值完成')
+      this.print('赋值完成')
     }
 
   }
