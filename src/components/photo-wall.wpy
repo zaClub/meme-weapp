@@ -37,7 +37,6 @@
       width: 100%;
       box-sizing: border-box;
       margin-bottom: 30rpx;
-      animation: fadeIn 1s ease;
       position: relative;
     }
 
@@ -47,16 +46,18 @@
       border-top-right-radius: 6rpx;
       display: block;
       position: absolute;
+      // animation: fadeIn 1s ease;
       top: 0;
       left: 0;
     }
 
     &__img--bg {
       width: 100%;
+      display: block;
       z-index: -1024;
       border-top-left-radius: 6rpx;
       border-top-right-radius: 6rpx;
-      background: gray;
+      background: grey;
     }
 
     &__tag {
@@ -78,22 +79,22 @@
 
 <template>
   <view class="photo" style="height: {{scrollHeight}}px">
-    <scroll-view class="photo__content" scroll-y="true" lower-threshold="50" 
+    <scroll-view class="photo__content" scroll-y="true" lower-threshold="150" 
       style="padding-left: {{contentPdLeft}}rpx;padding-right: {{contentPdRight}}rpx;"
       bindscrolltolower="onScrollToLower">
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/>
-          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <!-- <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/> -->
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
-          <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/>
-          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <!-- <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
+             bindlongpress="onLongpressImage"/> -->
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
           <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
         </view>
       </view>
@@ -148,7 +149,7 @@
       let images = this.getImages()
       this.images[this.imgArrKey] = images
       this.setImageToFalls(images)
-      this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+      // this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
       this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
       this.$apply()
     }
@@ -195,6 +196,8 @@
       scrollHeight: 0,    //滚动视图的高度 px
       adaptWidth: 0,    //图片自适应宽度 rpx
       tagHeight: 0,   //图片下标签的高度 rpx
+
+      scrollLock: false,    //触底锁
     }
 
     events = {
@@ -220,17 +223,23 @@
     methods = {
       //处理 scroll 到底事件
       onScrollToLower: event => {
+        if (this.scrollLock) return
+        this.scrollLock = true
+        setTimeout(() => {
+          this.scrollLock = false
+          this.$apply()
+        }, 2000);
+
         console.log('触底')
         let images = this.getImages()
         this.images[this.imgArrKey] = images
         this.setImageToFalls(images)
-        this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+        // this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
         this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
         this.$apply()
       },
       //预览图片
       onPreviewImage: event => {
-        if (this.lock) return
         let src = event ? event: ''
         wx.previewImage({
           current: src,
@@ -263,6 +272,7 @@
       this.leftPhotos = this.leftPhotos.concat(left)
       this.rightPhotos = this.rightPhotos.concat(right)
       this.$apply()
+      console.log('赋值完成')
     }
 
   }
