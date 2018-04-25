@@ -106,7 +106,7 @@
             <view class="upload__plus"></view>
           </view>
           <view wx:for-items="{{gifList}}" wx:for-item="item" wx:key="id" class="upload__item">
-            <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+            <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
           </view>
         </view>
       </view>
@@ -121,7 +121,7 @@
             <view class="upload__plus"></view>
           </view>
           <view wx:for-items="{{picList}}" wx:for-item="item" wx:key="id" class="upload__item">
-            <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+            <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
           </view>
         </view>
       </view>
@@ -159,6 +159,14 @@
     mixins = [MLog]
 
     methods = {
+      previewImage: (...args) => {
+        let src = args[0]
+        let list = args[1]
+        wx.previewImage({
+          current: src,
+          urls: list
+        })
+      },
       chooseImage: event => {
         let type = event
         switch (type) {
@@ -173,21 +181,21 @@
               sourceType: ['album', 'camera'],
               success: res => {
                 let tempFiles = res.tempFiles
-                let tempGifList = tempFiles.map(el => {
+                for (let el of tempFiles) {
                   if (el.size > this.gifMaxSize) {
                     this.print('gif is so large!!!')
                     wx.showModal({ cancelColor: '#313539', title: '提示',content: `图片限制最大为 ${this.gifMaxSize * 10 ** (-6)} MB` })
+                    continue
                   }
-                  return el.path
-                })
-                this.gifList = this.gifList.concat(tempGifList)
+                  this.gifList.unshift(el.path)
+                }
+                this.$apply()
 
-                //根据每次选择的图片，即 tempGifList 去更新 剩下可选的 GIF 数量
-                this.gifLeftCount = this.gifLeftCount - tempGifList.length
-
+                //根据每次选择的图片，即 gifList 去更新 剩下可选的 GIF 数量
+                this.gifLeftCount = this.maxCount - this.gifList.length
+                this.$apply()
                 this.print(this.gifList)
                 this.print(res)
-                this.$apply()
               }
             })
             break
@@ -203,15 +211,16 @@
               sourceType: ['album', 'camera'],
               success: res => {
                 let tempFiles = res.tempFiles
-                let tempPicList = tempFiles.map(el => el.path)
-                this.picList = this.picList.concat(tempPicList)
-
-                //根据每次选择的图片，即 tempPicList 去更新 剩下可选的图片数量
-                this.picLeftCount = this.picLeftCount - tempPicList.length
-
-                this.print(this.picList)
-                this.print(res)
+                for (let el of tempFiles) {
+                  this.picList.unshift(el.path)
+                }
                 this.$apply()
+
+                //根据每次选择的图片，即 picList 去更新 剩下可选的图片数量
+                this.picLeftCount = this.maxCount - this.picList.length
+                this.$apply()
+                this.print(this.picList)
+                this.print(res)   
               }
             })
             break
