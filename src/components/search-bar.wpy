@@ -4,7 +4,7 @@
   .searchbar {
     width: 100%;
     height: 100rpx;
-    background: $teal;
+    background: $nav-bar-bg;
     padding: 18rpx;
     box-sizing: border-box;
 

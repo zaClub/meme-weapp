@@ -6,7 +6,7 @@
     margin: 0;
     width: 100%;
     height: 100vh;
-    background: $bg;
+    background: $page-bg;
 
     .container {
       padding: 30rpx;

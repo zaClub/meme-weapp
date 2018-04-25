@@ -1,11 +1,11 @@
 <style lang="scss">
   @import '../assets/style/_variables.scss';
 
-  ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    color: transparent;
-  }
+  // ::-webkit-scrollbar {
+  //   width: 0;
+  //   height: 0;
+  //   color: transparent;
+  // }
 
   @keyframes fadeIn {
     0% { opacity: 0; background: #455a64 }

@@ -19,13 +19,13 @@ export default class extends wepy.app {
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#009688',
+      navigationBarBackgroundColor: '#313539',
       navigationBarTitleText: 'Meme',
       navigationBarTextStyle: 'white'
     },
     tabBar: {
       color: '#868686',
-      selectedColor: '#009688',
+      selectedColor: '#313539',
       borderStyle: 'black',
       position: 'bottom',
       list: [

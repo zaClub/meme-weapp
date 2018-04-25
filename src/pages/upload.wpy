@@ -87,6 +87,7 @@
             let tempFilePaths = res.tempFilePaths
             this.uploadList = this.uploadList.concat(tempFilePaths)
             console.log(this.uploadList)
+            console.log(res)
             this.$apply()
           }
         })

@@ -40,8 +40,8 @@
     &__item--selected {
       @extend %tag-item;
       background: $white;
-      border-color: $teal;
-      color: $teal
+      border-color: $theme;
+      color: $theme
     }
   }
 </style>
