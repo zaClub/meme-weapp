@@ -2,10 +2,10 @@
   @import '../assets/style/_variables.scss';
 
   .upload {
-    padding-left: 30rpx;
-    padding-top: 30rpx;
+    background: $page-bg;
+    height: 100vh;
 
-    .wrapper {
+    &__wrapper {
       display: flex;
       flex-wrap: wrap;
     }
@@ -47,50 +47,175 @@
         top: 22rpx;
       }
     }
+
+    .gif, .pic {
+      box-sizing: border-box;
+      width: 100;
+      height: 42vh;
+    }
+
+    &__type {
+      height: 16%;
+      background: $page-bg;
+      padding-left: 30rpx;
+      padding-right: 30rpx;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+
+      text {
+        color: $font;
+        font-size: 2.5vh;
+        line-height: 100%; 
+      }
+    }
+
+    &__content {
+      height: 84%;
+      background: $white;
+      box-sizing: border-box;
+      padding-left: 30rpx;
+      padding-top: 30rpx;
+      overflow: auto;
+    }
+
+    button {
+      color: $white;
+      background: $theme;
+      margin: 3vh 6rpx;
+      height: 8vh;
+
+      &:active {
+        background: $theme;
+        color: $font-click;
+      }
+    }
+
   }
 </style>
 
 <template>
   <view class="upload">
-    <view class="wrapper">
-      <view wx:for-items="{{uploadList}}" wx:for-item="item" wx:key="id" class="upload__item">
-        <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+    <view class="gif">
+      <view class="upload__type">
+        <text>添加动图 ({{gifList.length}}/{{maxCount}})</text>
       </view>
-      <view class="upload__item" @tap="chooseImage">
-        <view class="upload__plus"></view>
+      <view class="upload__content">
+        <view class="upload__wrapper">
+          <view class="upload__item" @tap="chooseImage('gif')">
+            <view class="upload__plus"></view>
+          </view>
+          <view wx:for-items="{{gifList}}" wx:for-item="item" wx:key="id" class="upload__item">
+            <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+          </view>
+        </view>
       </view>
     </view>
+    <view class="pic">
+      <view class="upload__type">
+        <text>添加静图 ({{picList.length}}/{{maxCount}})</text>
+      </view>
+      <view class="upload__content">
+        <view class="upload__wrapper">
+          <view class="upload__item" @tap="chooseImage('pic')">
+            <view class="upload__plus"></view>
+          </view>
+          <view wx:for-items="{{picList}}" wx:for-item="item" wx:key="id" class="upload__item">
+            <image class="upload__img" src="{{item}}" mode="aspectFill"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    <button>上传</button>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import MLog from '../mixins/mlog'
 
   export default class Upload extends wepy.page {
     onLoad() {
+      this.init()
+    }
+
+    init() {
+      this.maxCount = 9
+      this.gifLeftCount = this.maxCount
+      this.gifMaxSize = 5000000
+      this.picLeftCount = this.maxCount
     }
 
     data = {
-      uploadList: [
+      gifList: [],
+      picList: [],
 
-      ],
+      maxCount: 0,
+      gifLeftCount: 0,    //gif 剩下可选数量
+      gifMaxSize: 0,    //gif 体积最大值
+      picLeftCount: 0,    //pic 剩下可选数量
     }
+
+    mixins = [MLog]
 
     methods = {
       chooseImage: event => {
-        wx.chooseImage({
-          count: 9,
-          sizeType: ['compressed'],
-          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-          success: res => {
-            // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-            let tempFilePaths = res.tempFilePaths
-            this.uploadList = this.uploadList.concat(tempFilePaths)
-            console.log(this.uploadList)
-            console.log(res)
-            this.$apply()
-          }
-        })
+        let type = event
+        switch (type) {
+          case 'gif':
+            if (this.gifList.length === this.maxCount) {
+              wx.showModal({ cancelColor: '#313539', title: '提示',content: `动图最多一次上传 ${this.maxCount} 张` })
+              break
+            }
+            wx.chooseImage({
+              count: this.gifLeftCount,
+              sizeType: ['original'],
+              sourceType: ['album', 'camera'],
+              success: res => {
+                let tempFiles = res.tempFiles
+                let tempGifList = tempFiles.map(el => {
+                  if (el.size > this.gifMaxSize) {
+                    this.print('gif is so large!!!')
+                    wx.showModal({ cancelColor: '#313539', title: '提示',content: `图片限制最大为 ${this.gifMaxSize * 10 ** (-6)} MB` })
+                  }
+                  return el.path
+                })
+                this.gifList = this.gifList.concat(tempGifList)
+
+                //根据每次选择的图片，即 tempGifList 去更新 剩下可选的 GIF 数量
+                this.gifLeftCount = this.gifLeftCount - tempGifList.length
+
+                this.print(this.gifList)
+                this.print(res)
+                this.$apply()
+              }
+            })
+            break
+          case 'pic':
+          default:
+            if (this.picList.length === this.maxCount) {
+              wx.showModal({ cancelColor: '#313539', title: '提示',content: `静图最多一次上传 ${this.maxCount} 张` })
+              break
+            }
+            wx.chooseImage({
+              count: this.picLeftCount,
+              sizeType: ['compressed'],
+              sourceType: ['album', 'camera'],
+              success: res => {
+                let tempFiles = res.tempFiles
+                let tempPicList = tempFiles.map(el => el.path)
+                this.picList = this.picList.concat(tempPicList)
+
+                //根据每次选择的图片，即 tempPicList 去更新 剩下可选的图片数量
+                this.picLeftCount = this.picLeftCount - tempPicList.length
+
+                this.print(this.picList)
+                this.print(res)
+                this.$apply()
+              }
+            })
+            break
+        }
       }
     }
   }
