@@ -60,11 +60,9 @@
       background: grey;
     }
 
-    &__tag {
+    &__operate {
       box-sizing: border-box;
       background: $white;
-      padding-left: 20rpx;
-      padding-right: 20rpx;
       border-bottom: 1rpx solid transparent;
       border-left: 1rpx solid transparent;
       border-right: 1rpx solid transparent;
@@ -73,6 +71,38 @@
       font-size: 30rpx;
       color: $font;
       width: 100%;
+
+      &--tag {
+        box-sizing: border-box;
+        display: inline-block;
+        padding-left: 10rpx;
+        padding-right: 10rpx;
+        vertical-align: top;
+        height: 100%;
+        width: 80%;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      &--oper {
+        box-sizing: border-box;
+        text-align: center;
+        padding-left: 10rpx;
+        padding-right: 10rpx;
+        display: inline-block;
+        vertical-align: top;
+        border-left: 1rpx solid $light-edge;
+        height: 100%;
+        width: 20%;
+      }
+      &--rect {
+        width: 10rpx;
+        height: 10rpx;
+        border-radius: 50%;
+        vertical-align: center;
+        display: inline-block;
+        margin: 2rpx;
+        background: $operate;
+      }
     }
   }
 </style>
@@ -86,16 +116,30 @@
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
              bindlongpress="onLongpressImage"/>
-          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
-          <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
+            <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
+            <view class="photo__operate--oper">
+              <view class="photo__operate--rect"></view>
+              <view class="photo__operate--rect"></view>
+              <view class="photo__operate--rect"></view>
+            </view>
+          </view>
         </view>
       </view>
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
              bindlongpress="onLongpressImage"/>
-          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx" src="{{photo.mini}}"></view>
-          <view class="photo__tag" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">权律二、宋民国</view>
+          <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
+          <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
+            <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
+            <view class="photo__operate--oper">
+              <view class="photo__operate--rect"></view>
+              <view class="photo__operate--rect"></view>
+              <view class="photo__operate--rect"></view>
+            </view>
+          </view>
         </view>
       </view>
     </scroll-view>

@@ -154,7 +154,7 @@
                 <view class="upload__delete--rect"></view>
               </view>
             </view>
-            <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
+            <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{gifList}})"></image>
           </view>
         </view>
       </view>
@@ -179,7 +179,7 @@
         </view>
       </view>
     </view>
-    <button>上传</button>
+    <button @tap="uploadImage">上传</button>
   </view>
 </template>
 
@@ -197,6 +197,8 @@
       this.gifLeftCount = this.maxCount
       this.gifMaxSize = 5000000
       this.picLeftCount = this.maxCount
+      this.gifList = []
+      this.picList = []
     }
 
     data = {
@@ -289,6 +291,23 @@
             })
             break
         }
+      },
+      uploadImage: event => {
+        wx.showLoading({
+          title: '上传中',
+        })
+
+        setTimeout(() => {
+          wx.hideLoading()
+          this.gifList = []
+          this.picList = []
+          this.$apply()
+          wx.showToast({
+            title: '上传成功',
+            icon: 'success',
+            duration: 2000
+          })
+        }, 2000)
       }
     }
   }
