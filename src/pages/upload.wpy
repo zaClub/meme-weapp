@@ -20,6 +20,49 @@
       position: relative;
     }
 
+    &__delete {
+      position: absolute;
+      top: 5rpx;
+      right: 5rpx;
+      width: 30rpx;
+      height: 30rpx;
+      background: $theme;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &--bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50rpx;
+        height: 50rpx;
+        background: transparent;
+      }
+
+      &--rect {
+        box-sizing: border-box;
+        padding: 0;
+        width: 20rpx;
+        height: 4rpx;
+        background: white;
+        transform: rotate(-45deg);
+        position: relative;
+
+        &::before {
+          position: absolute;
+          content: "";
+          left: 8rpx;
+          top: -8rpx;
+          width: 4rpx;
+          height: 20rpx;
+          background: white;
+        }
+      }
+      
+    }
+
     &__img {
       display: block;
       border-radius: 6rpx;
@@ -105,7 +148,12 @@
           <view class="upload__item" @tap="chooseImage('gif')">
             <view class="upload__plus"></view>
           </view>
-          <view wx:for-items="{{gifList}}" wx:for-item="item" wx:key="id" class="upload__item">
+          <view wx:for-items="{{gifList}}" wx:for-item="item" wx:key="id" wx:for-index="idx" class="upload__item">
+            <view class="upload__delete--bg" @tap="deleteImage({{idx}}, 'gif')">
+              <view class="upload__delete">
+                <view class="upload__delete--rect"></view>
+              </view>
+            </view>
             <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
           </view>
         </view>
@@ -120,7 +168,12 @@
           <view class="upload__item" @tap="chooseImage('pic')">
             <view class="upload__plus"></view>
           </view>
-          <view wx:for-items="{{picList}}" wx:for-item="item" wx:key="id" class="upload__item">
+          <view wx:for-items="{{picList}}" wx:for-item="item" wx:key="id" wx:for-index="idx" class="upload__item">
+            <view class="upload__delete--bg" @tap="deleteImage({{idx}}, 'pic')">
+              <view class="upload__delete">
+                <view class="upload__delete--rect"></view>
+              </view>
+            </view>
             <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
           </view>
         </view>
@@ -159,6 +212,17 @@
     mixins = [MLog]
 
     methods = {
+      deleteImage: (idx, type) => {
+        let list = type==='gif' ? this.gifList : this.picList
+        wx.showModal({
+          title: '提示',
+          content: '确定删除？',
+          success: res => {
+            if (res.confirm) list.splice(idx, 1)
+            this.$apply()
+          }
+        })
+      },
       previewImage: (...args) => {
         let src = args[0]
         let list = args[1]
