@@ -207,7 +207,7 @@
       this.rightPhotos = []
       this.scrollLock = false    //触底锁
       this.col1H = 0
-      ths.col2H = 0
+      this.col2H = 0
     }
 
     init() {
