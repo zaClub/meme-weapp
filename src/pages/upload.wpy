@@ -193,6 +193,9 @@
     }
 
     init() {
+      wx.setNavigationBarTitle({
+        title: '上传'
+      })
       this.maxCount = 9
       this.gifLeftCount = this.maxCount
       this.gifMaxSize = 5000000

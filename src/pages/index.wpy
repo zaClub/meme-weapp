@@ -20,15 +20,26 @@
 <script>
   import wepy from 'wepy'
   import SearchBar from '@/components/search-bar'
-  import AllTag from '@/components/all-tag'
   import PhotoWall from '@/components/photo-wall'
 
   export default class Index extends wepy.page {
+    onLoad() {
+      // 获取个人信息
+      // this.$parent.getUserInfo(function (userInfo) {
+      //   if (userInfo) {
+      //     console.log('userinfo',userInfo)
+      //   }
+      // })
+    }
+
+    onShow() {
+      this.$invoke('photowall','onShow')
+    }
+
     config = {}
 
     components = {
       searchbar: SearchBar,
-      alltag: AllTag,
       photowall: PhotoWall
     }
 
@@ -52,15 +63,6 @@
           url: 'tag?id=666'
         })
       }
-    }
-
-    onLoad() {
-      // 获取个人信息
-      // this.$parent.getUserInfo(function (userInfo) {
-      //   if (userInfo) {
-      //     console.log('userinfo',userInfo)
-      //   }
-      // })
     }
   }
 </script>

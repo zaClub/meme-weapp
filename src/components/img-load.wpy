@@ -41,7 +41,6 @@
         this.removeFromLoadlist(src)
         this.loaded(this.msg.success, src, arrKey)
         this.$apply()
-        // console.log(JSON.stringify(this.imgInfo))
       },
 
       onImageError: event => {

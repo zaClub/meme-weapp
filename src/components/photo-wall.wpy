@@ -80,7 +80,8 @@
         vertical-align: top;
         height: 100%;
         width: 80%;
-        overflow-x: auto;
+        white-space: nowrap;
+        overflow-x: scroll;
         overflow-y: hidden;
       }
       &--oper {
@@ -90,7 +91,7 @@
         padding-right: 10rpx;
         display: inline-block;
         vertical-align: top;
-        border-left: 1rpx solid $light-edge;
+        border-left: 1rpx dashed $light-edge;
         height: 100%;
         width: 20%;
       }
@@ -119,7 +120,7 @@
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
             <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
-            <view class="photo__operate--oper">
+            <view class="photo__operate--oper" @tap="editMeme({{photo.memeId}})">
               <view class="photo__operate--rect"></view>
               <view class="photo__operate--rect"></view>
               <view class="photo__operate--rect"></view>
@@ -134,7 +135,7 @@
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
             <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
-            <view class="photo__operate--oper">
+            <view class="photo__operate--oper" @tap="editMeme({{photo.memeId}})">
               <view class="photo__operate--rect"></view>
               <view class="photo__operate--rect"></view>
               <view class="photo__operate--rect"></view>
@@ -156,10 +157,18 @@
   export default class PhotoWall extends wepy.component {
 
     onLoad() {
+      wx.setNavigationBarTitle({
+        title: 'Meme'
+      })
       this.init()     //初始化数据
     }
 
-    init() {
+    onShow() {
+      this.initData()
+      this.obtainMeme()
+    }
+
+    initSize() {
       //获取窗口信息并设置尺寸信息
       wx.getSystemInfo({
         success: resp => {
@@ -189,17 +198,30 @@
           this.$apply()
         }
       })
-
-      //初始状态先获取一次
-      let images = this.getImages()
-      this.images[this.imgArrKey] = images
-      this.setImageToFalls(images)
-      this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
-      this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
-      this.$apply()
     }
 
-    getImages() {
+    initData() {
+      this.imgArrKey = '0'
+      this.images = {}       //每次获取的图片都放进来
+      this.leftPhotos = []
+      this.rightPhotos = []
+      this.scrollLock = false    //触底锁
+      this.col1H = 0
+      ths.col2H = 0
+    }
+
+    init() {
+      //获取窗口信息并设置尺寸信息
+      this.initSize()
+
+      //初始化数据
+      this.initData()
+
+      //初始状态先获取一次
+      this.obtainMeme()
+    }
+
+    testGetImages() {
       return this.photos.slice(0, 10)
     }
 
@@ -218,21 +240,22 @@
 
     data = {
       photos: [
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959, sort: 8},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg', loaded: false, width: 800, height: 533, sort: 9},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-01.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg', loaded: false, width: 394, height: 392, sort: 0},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-02.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/02.jpg', loaded: false, width: 1440, height: 1080, sort: 1},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-04.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/04.jpg', loaded: false, width: 564, height: 564, sort: 2},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-05.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/05.jpg', loaded: false, width: 894, height: 894, sort: 3},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-06.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/06.jpg', loaded: false, width: 1200, height: 800, sort: 4},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-07.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/07.jpg', loaded: false, width: 1080, height: 1080, sort: 5},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-08.png', normal: 'http://os5w1n6kc.bkt.clouddn.com/08.png', loaded: false, width: 537, height: 453, sort: 6},
-        { mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-09.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/09.jpg', loaded: false, width: 1000, height: 667, sort: 7},
+        { memeId: 1, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959, sort: 8},
+        { memeId: 2, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg', loaded: false, width: 800, height: 533, sort: 9},
+        { memeId: 3, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-01.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/01.jpg', loaded: false, width: 394, height: 392, sort: 0},
+        { memeId: 4, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-02.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/02.jpg', loaded: false, width: 1440, height: 1080, sort: 1},
+        { memeId: 5, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-04.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/04.jpg', loaded: false, width: 564, height: 564, sort: 2},
+        { memeId: 6, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-05.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/05.jpg', loaded: false, width: 894, height: 894, sort: 3},
+        { memeId: 7, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-06.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/06.jpg', loaded: false, width: 1200, height: 800, sort: 4},
+        { memeId: 8, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-07.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/07.jpg', loaded: false, width: 1080, height: 1080, sort: 5},
+        { memeId: 9, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-08.png', normal: 'http://os5w1n6kc.bkt.clouddn.com/08.png', loaded: false, width: 537, height: 453, sort: 6},
+        { memeId: 10, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-09.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/09.jpg', loaded: false, width: 1000, height: 667, sort: 7},
       ],
       imgArrKey: '0',
       images: {},       //每次获取的图片都放进来
       leftPhotos: [],
       rightPhotos: [],
+      scrollLock: false,    //触底锁
 
       contentPdLeft: 0,   //照片墙的左内边距 rpx
       contentPdRight: 0,    //照片墙的右内边距 rpx
@@ -242,9 +265,7 @@
       col2H: 0,    //右列高度 rpx
       scrollHeight: 0,    //滚动视图的高度 px
       adaptWidth: 0,    //图片自适应宽度 rpx
-      tagHeight: 0,   //图片下标签的高度 rpx
-
-      scrollLock: false,    //触底锁
+      tagHeight: 0,   //图片下标签的高度 rpx   
     }
 
     events = {
@@ -276,14 +297,8 @@
           this.scrollLock = false
           this.$apply()
         }, 1000);
-
         this.print('触底')
-        let images = this.getImages()
-        this.images[this.imgArrKey] = images
-        this.setImageToFalls(images)
-        this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
-        this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
-        this.$apply()
+        this.obtainMeme()
       },
       //预览图片
       onPreviewImage: event => {
@@ -299,6 +314,13 @@
       },
       onTouchEnd: event => {
         this.print('onTouchEnd')
+      },
+      //点击图片下的更多图标
+      editMeme: event => {
+        let id = event
+        wx.navigateTo({
+          url: `tag?id=${id}`
+        })
       }
     }
 
@@ -306,6 +328,7 @@
     setImageToFalls(images) {
       let left = [],right = []
       images.sort((a,b) => a.sort - b.sort)
+      console.log(JSON.stringify(images))
       for (let el of images) {
         el.adaptHeight = this.adaptWidth * (el.height / el.width)
         if (this.col1H <= this.col2H) {
@@ -320,6 +343,15 @@
       this.rightPhotos = this.rightPhotos.concat(right)
       this.$apply()
       this.print('赋值完成')
+    }
+
+    obtainMeme() {
+      let images = this.testGetImages()
+      this.images[this.imgArrKey] = images
+      this.setImageToFalls(images)
+      this.$invoke('imgload','load',images.map(el => ( { src: el.normal, arrKey: this.imgArrKey } )))
+      this.imgArrKey = +this.imgArrKey + 1 + ''     //加 1 再转回字符串
+      this.$apply()
     }
 
   }

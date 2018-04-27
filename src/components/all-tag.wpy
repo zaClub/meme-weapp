@@ -21,6 +21,8 @@
 
   .alltag {
     box-sizing: border-box;
+    padding-top: 30rpx;
+    padding-left: 30rpx;
 
     text {
       font-size: 30rpx;
@@ -61,16 +63,19 @@
 
 <script>
   import wepy from 'wepy'
+  import MLog from '../mixins/mlog'
 
   export default class AllTag extends wepy.component {
 
     onLoad() {
-      console.log(this.$name,'onLoad()')
+      this.print(this.$name,'onLoad()')
     }
 
     data = {
       
     }
+
+    mixins = [MLog]
 
     props = {
       //forSearch:true 时，组件给搜索页面使用
