@@ -328,7 +328,6 @@
     setImageToFalls(images) {
       let left = [],right = []
       images.sort((a,b) => a.sort - b.sort)
-      console.log(JSON.stringify(images))
       for (let el of images) {
         el.adaptHeight = this.adaptWidth * (el.height / el.width)
         if (this.col1H <= this.col2H) {
