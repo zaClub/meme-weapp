@@ -1,5 +1,10 @@
 <style lang="scss">
-
+  @import './assets/style/_variables.scss';
+  
+  page {
+    height: 100%;
+    background: $bg;
+  }
 </style>
 
 <script>
@@ -21,7 +26,8 @@ export default class extends wepy.app {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#313539',
       navigationBarTitleText: 'Meme',
-      navigationBarTextStyle: 'white'
+      navigationBarTextStyle: 'white',
+      backgroundColor: '#ebebeb',
     },
     tabBar: {
       color: '#868686',

@@ -2,8 +2,6 @@
   @import '../assets/style/_variables.scss';
 
   .upload {
-    background: $page-bg;
-    height: 100vh;
 
     &__wrapper {
       display: flex;
@@ -91,30 +89,15 @@
       }
     }
 
-    .gif, .pic {
-      box-sizing: border-box;
-      width: 100;
-      height: 42vh;
-    }
-
     &__type {
-      height: 16%;
-      background: $page-bg;
-      padding-left: 30rpx;
-      padding-right: 30rpx;
+      padding: 20rpx 30rpx;
       box-sizing: border-box;
-      display: flex;
-      align-items: center;
-
-      text {
-        color: $font;
-        font-size: 2.5vh;
-        line-height: 100%; 
-      }
+      color: $font;
+      font-size: 28rpx;
     }
 
     &__content {
-      height: 84%;
+      height: 390rpx;
       background: $white;
       box-sizing: border-box;
       padding-left: 30rpx;
@@ -125,8 +108,9 @@
     button {
       color: $white;
       background: $theme;
-      margin: 3vh 6rpx;
-      height: 8vh;
+      margin: 30rpx 6rpx;
+      height: 90rpx;
+      font-size: 36rpx;
 
       &:active {
         background: $theme;
@@ -139,9 +123,9 @@
 
 <template>
   <view class="upload">
-    <view class="gif">
+    <view class="gif" wx:if="{{platform==='android'}}">
       <view class="upload__type">
-        <text>添加动图 ({{gifList.length}}/{{maxCount}})</text>
+        添加 GIF ({{gifList.length}}/{{maxCount}})
       </view>
       <view class="upload__content">
         <view class="upload__wrapper">
@@ -161,9 +145,9 @@
     </view>
     <view class="pic">
       <view class="upload__type">
-        <text>添加静图 ({{picList.length}}/{{maxCount}})</text>
+        添加图片 ({{picList.length}}/{{maxCount}})
       </view>
-      <view class="upload__content">
+      <view class="upload__content" style="height: {{platform!=='android' ? '570':'390'}}rpx">
         <view class="upload__wrapper">
           <view class="upload__item" @tap="chooseImage('pic')">
             <view class="upload__plus"></view>
@@ -189,13 +173,22 @@
 
   export default class Upload extends wepy.page {
     onLoad() {
+      this.getPhoneModel()
       this.init()
     }
 
+    // 获取客户端平台
+    getPhoneModel() {
+      try {
+        let res = wx.getSystemInfoSync()
+        this.platform = res.platform
+      } catch (e) {
+        this.print(e)
+      }
+    }
+
     init() {
-      wx.setNavigationBarTitle({
-        title: '上传'
-      })
+      wx.setNavigationBarTitle({ title: '上传' })
       this.maxCount = 9
       this.gifLeftCount = this.maxCount
       this.gifMaxSize = 5000000
@@ -212,6 +205,8 @@
       gifLeftCount: 0,    //gif 剩下可选数量
       gifMaxSize: 0,    //gif 体积最大值
       picLeftCount: 0,    //pic 剩下可选数量
+
+      platform: '',   //客户端平台
     }
 
     mixins = [MLog]
