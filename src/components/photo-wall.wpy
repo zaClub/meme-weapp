@@ -110,10 +110,9 @@
 
 <template>
   <view class="photo" style="height: {{scrollHeight}}px">
-    <scroll-view class="photo__content" scroll-y="true" lower-threshold="150" 
-      style="padding-left: {{contentPdLeft}}rpx;padding-right: {{contentPdRight}}rpx;"
+    <scroll-view class="photo__content" scroll-y="true" lower-threshold="150"
       bindscrolltolower="onScrollToLower">
-      <view class="photo__col" style="padding-right: {{colPdRight}}rpx">
+      <view class="photo__col" style="padding-right: {{colPdRight}}rpx;padding-left: {{contentPdLeft}}rpx;">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
              bindlongpress="onLongpressImage"/>
@@ -128,7 +127,7 @@
           </view>
         </view>
       </view>
-      <view class="photo__col" style="padding-left: {{colPdLeft}}rpx">
+      <view class="photo__col" style="padding-left: {{colPdLeft}}rpx;padding-right: {{contentPdRight}}rpx;">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
              bindlongpress="onLongpressImage"/>

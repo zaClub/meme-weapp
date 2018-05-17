@@ -97,7 +97,7 @@
     }
 
     &__content {
-      height: 390rpx;
+      height: 570rpx;
       background: $white;
       box-sizing: border-box;
       padding-left: 30rpx;
@@ -125,7 +125,7 @@
   <view class="upload">
     <view class="gif" wx:if="{{platform==='android'}}">
       <view class="upload__type">
-        添加 GIF ({{gifList.length}}/{{maxCount}})
+        添加GIF ({{gifList.length}}/{{maxCount}})
       </view>
       <view class="upload__content">
         <view class="upload__wrapper">
@@ -147,7 +147,7 @@
       <view class="upload__type">
         添加图片 ({{picList.length}}/{{maxCount}})
       </view>
-      <view class="upload__content" style="height: {{platform!=='android' ? '570':'390'}}rpx">
+      <view class="upload__content">
         <view class="upload__wrapper">
           <view class="upload__item" @tap="chooseImage('pic')">
             <view class="upload__plus"></view>
