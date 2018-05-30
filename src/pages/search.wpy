@@ -5,7 +5,6 @@
     box-sizing: border-box;
     margin: 0;
     width: 100%;
-    height: 100vh;
     background: $page-bg;
   }
 </style>
@@ -17,6 +16,7 @@
       <alltag wx:if="{{isShowTags}}" :forSearch.sync="forSearch" :tags.sync="tags"></alltag>
       <photowall wx:if="{{isShowPhotos}}" :query.sync="query"></photowall>
     </view>
+    <toast />
   </view>
 </template>
 
@@ -25,20 +25,10 @@
   import SearchBar from '@/components/search-bar'
   import AllTag from '@/components/all-tag'
   import PhotoWall from '@/components/photo-wall'
+  import ZToast from '../mixins/ztoast'
+  import Toast from 'wepy-com-toast'
 
   export default class Search extends wepy.page {
-
-    onLoad() {
-      this.init()
-    }
-    
-    init() {
-      wx.setNavigationBarTitle({
-        title: '搜索'
-      })
-      //初始化搜索页面时显示 [所有标签]
-      this.showAllTags()
-    }
 
     data = {
       query: '',
@@ -57,9 +47,24 @@
     }
 
     components = {
+      toast: Toast,
       searchbar: SearchBar,
       alltag: AllTag,
       photowall: PhotoWall
+    }
+
+    mixins = [ZToast]
+
+    onLoad() {
+      this.init()
+    }
+    
+    init() {
+      wx.setNavigationBarTitle({
+        title: '搜索'
+      })
+      //初始化搜索页面时显示 [所有标签]
+      this.showAllTags()
     }
 
     methods = {

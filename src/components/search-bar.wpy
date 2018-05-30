@@ -49,12 +49,12 @@
 <script>
   import wepy from 'wepy'
   import Toast from 'wepy-com-toast'
-  import MLog from '../mixins/mlog'
+  import { Icon } from '../assets/icon/icon'
 
   export default class SearchBar extends wepy.component {
 
     onLoad() {
-      this.print('search-bar onload')
+
       wx.getSystemInfo({
         success: resp => {
           this.height = resp.windowHeight * 0.1
@@ -80,44 +80,38 @@
     }
 
     data = {
-      height: 0
+      height: 0,
+      Icon: Icon,
     }
 
     components = {
       toast: Toast,
     }
 
-    mixins = [MLog]
-
     events = {}
 
     methods = {
       onFocus: event => {
-        this.print('搜索框获得焦点')
         let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputFocus', value)
       },
 
       onBlur: event => {
-        this.print('搜索框失去焦点')
         let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputBlur', value)
       },
 
       onInput: event => {
         let value = event.detail.value ? event.detail.value : ''
-        this.print('输入中',value)
         this.$emit('onInputing', value)
       },
 
       onConfirm: event => {
-        this.print('点击搜索按钮')
         let value = event.detail.value ? event.detail.value : ''
         this.$emit('onInputConfirm', value)
       },
 
       onClick: event => {
-        this.print('点击搜索框')
         this.$emit('onInputClick')
       },
 

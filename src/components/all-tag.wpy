@@ -63,19 +63,17 @@
 
 <script>
   import wepy from 'wepy'
-  import MLog from '../mixins/mlog'
+  import { Icon } from '../assets/icon/icon'
 
   export default class AllTag extends wepy.component {
 
     onLoad() {
-      this.print(this.$name,'onLoad()')
+
     }
 
     data = {
-      
+      Icon: Icon
     }
-
-    mixins = [MLog]
 
     props = {
       //forSearch:true 时，组件给搜索页面使用

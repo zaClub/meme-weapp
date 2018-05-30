@@ -46,7 +46,6 @@
       border-top-right-radius: 6rpx;
       display: block;
       position: absolute;
-      // animation: fadeIn 1s ease;
       top: 0;
       left: 0;
     }
@@ -115,7 +114,7 @@
       <view class="photo__col" style="padding-right: {{colPdRight}}rpx;padding-left: {{contentPdLeft}}rpx;">
         <view class="photo__item" wx:for-items="{{leftPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/>
+            @tap="onPreviewImage({{photo.normal}})"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
             <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
@@ -130,7 +129,7 @@
       <view class="photo__col" style="padding-left: {{colPdLeft}}rpx;padding-right: {{contentPdRight}}rpx;">
         <view class="photo__item" wx:for-items="{{rightPhotos}}" wx:for-item="photo" wx:key="id">
           <image wx:if="{{photo.loaded}}" mode="widthFix" class="photo__img" src="{{photo.normal}}" style="height: {{photo.adaptHeight}}rpx" 
-             bindlongpress="onLongpressImage"/>
+            @tap="onPreviewImage({{photo.normal}})"/>
           <view class="photo__img--bg" style="height: {{photo.adaptHeight}}rpx"></view>
           <view class="photo__operate" style="height: {{tagHeight}}rpx; line-height:{{tagHeight}}rpx; top: {{photo.adaptHeight}}rpx">
             <view class="photo__operate--tag">宋民国、张学友、van、蘑菇头</view>
@@ -151,14 +150,12 @@
   import wepy from 'wepy'
   import Toast from 'wepy-com-toast'
   import ImgLoad from './img-load'
-  import MLog from '../mixins/mlog'
+  import { Icon } from '../assets/icon/icon'
 
   export default class PhotoWall extends wepy.component {
 
     onLoad() {
-      wx.setNavigationBarTitle({
-        title: 'Meme'
-      })
+      wx.setNavigationBarTitle({ title: 'Meme' })
       this.init()     //初始化数据
     }
 
@@ -235,9 +232,8 @@
       }
     }
 
-    mixins = [MLog]
-
     data = {
+      Icon: Icon,
       photos: [
         { memeId: 1, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-10.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/10.jpg', loaded: false, width: 1280, height: 959, sort: 8},
         { memeId: 2, mini: 'http://os5w1n6kc.bkt.clouddn.com/mini-11.jpg', normal: 'http://os5w1n6kc.bkt.clouddn.com/11.jpg', loaded: false, width: 800, height: 533, sort: 9},
@@ -272,15 +268,12 @@
       onLoaded: (msg, src, arrKey) => {
         switch (msg) {
           case 'success':
-            // this.print(arrKey)
             let list = this.images[arrKey]
-            // this.print(this.images)
             let index = list.findIndex(el => el.normal === src)
             list[index].loaded = true
             this.$apply()
             break;
           case 'fail':
-            this.print(msg)
             this.$apply()
             break;
         }
@@ -296,7 +289,6 @@
           this.scrollLock = false
           this.$apply()
         }, 1000);
-        this.print('触底')
         this.obtainMeme()
       },
       //预览图片
@@ -309,10 +301,10 @@
       },
       //长按图片进行更多操作
       onLongpressImage: event => {
-        this.print('onLongpressImage')
+
       },
       onTouchEnd: event => {
-        this.print('onTouchEnd')
+
       },
       //点击图片下的更多图标
       editMeme: event => {
@@ -340,7 +332,6 @@
       this.leftPhotos = this.leftPhotos.concat(left)
       this.rightPhotos = this.rightPhotos.concat(right)
       this.$apply()
-      this.print('赋值完成')
     }
 
     obtainMeme() {

@@ -20,45 +20,18 @@
 
     &__delete {
       position: absolute;
-      top: 5rpx;
-      right: 5rpx;
-      width: 30rpx;
-      height: 30rpx;
-      background: $theme;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      top: 0rpx;
+      right: 0rpx;
+      width: 40rpx;
+      height: 40rpx;
 
-      &--bg {
+      &--img {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 50rpx;
-        height: 50rpx;
-        background: transparent;
+        top: 5rpx;
+        right: 5rpx;
+        width: 30rpx;
+        height: 30rpx;
       }
-
-      &--rect {
-        box-sizing: border-box;
-        padding: 0;
-        width: 20rpx;
-        height: 4rpx;
-        background: white;
-        transform: rotate(-45deg);
-        position: relative;
-
-        &::before {
-          position: absolute;
-          content: "";
-          left: 8rpx;
-          top: -8rpx;
-          width: 4rpx;
-          height: 20rpx;
-          background: white;
-        }
-      }
-      
     }
 
     &__img {
@@ -133,10 +106,8 @@
             <view class="upload__plus"></view>
           </view>
           <view wx:for-items="{{gifList}}" wx:for-item="item" wx:key="id" wx:for-index="idx" class="upload__item">
-            <view class="upload__delete--bg" @tap="deleteImage({{idx}}, 'gif')">
-              <view class="upload__delete">
-                <view class="upload__delete--rect"></view>
-              </view>
+            <view class="upload__delete" @tap="deleteImage({{idx}}, 'gif')">
+              <image class="upload__delete--img" src="{{Icon.remove}}" mode="scaleToFill"/>
             </view>
             <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{gifList}})"></image>
           </view>
@@ -154,9 +125,7 @@
           </view>
           <view wx:for-items="{{picList}}" wx:for-item="item" wx:key="id" wx:for-index="idx" class="upload__item">
             <view class="upload__delete--bg" @tap="deleteImage({{idx}}, 'pic')">
-              <view class="upload__delete">
-                <view class="upload__delete--rect"></view>
-              </view>
+              <image class="upload__delete--img" src="{{Icon.remove}}" mode="scaleToFill"/>
             </view>
             <image class="upload__img" src="{{item}}" mode="aspectFill" @tap="previewImage({{item}},{{picList}})"></image>
           </view>
@@ -164,14 +133,38 @@
       </view>
     </view>
     <button @tap="uploadImage">上传</button>
+    <toast />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import MLog from '../mixins/mlog'
+  import Toast from 'wepy-com-toast'
+  import ZToast from '../mixins/ztoast'
+  import { ToastType } from '../constant/consts'
+  import { Icon } from '../assets/icon/icon'
 
   export default class Upload extends wepy.page {
+
+    data = {
+      Icon: Icon,
+      gifList: [],
+      picList: [],
+
+      maxCount: 0,
+      gifLeftCount: 0,    //gif 剩下可选数量
+      gifMaxSize: 0,    //gif 体积最大值
+      picLeftCount: 0,    //pic 剩下可选数量
+
+      platform: '',   //客户端平台
+    }
+
+    components = {
+      toast: Toast
+    }
+
+    mixins = [ZToast]
+
     onLoad() {
       this.getPhoneModel()
       this.init()
@@ -183,7 +176,7 @@
         let res = wx.getSystemInfoSync()
         this.platform = res.platform
       } catch (e) {
-        this.print(e)
+
       }
     }
 
@@ -196,20 +189,6 @@
       this.gifList = []
       this.picList = []
     }
-
-    data = {
-      gifList: [],
-      picList: [],
-
-      maxCount: 0,
-      gifLeftCount: 0,    //gif 剩下可选数量
-      gifMaxSize: 0,    //gif 体积最大值
-      picLeftCount: 0,    //pic 剩下可选数量
-
-      platform: '',   //客户端平台
-    }
-
-    mixins = [MLog]
 
     methods = {
       deleteImage: (idx, type) => {
@@ -247,7 +226,6 @@
                 let tempFiles = res.tempFiles
                 for (let el of tempFiles) {
                   if (el.size > this.gifMaxSize) {
-                    this.print('gif is so large!!!')
                     wx.showModal({ cancelColor: '#313539', title: '提示',content: `图片限制最大为 ${this.gifMaxSize * 10 ** (-6)} MB` })
                     continue
                   }
@@ -258,8 +236,6 @@
                 //根据每次选择的图片，即 gifList 去更新 剩下可选的 GIF 数量
                 this.gifLeftCount = this.maxCount - this.gifList.length
                 this.$apply()
-                this.print(this.gifList)
-                this.print(res)
               }
             })
             break
@@ -283,8 +259,6 @@
                 //根据每次选择的图片，即 picList 去更新 剩下可选的图片数量
                 this.picLeftCount = this.maxCount - this.picList.length
                 this.$apply()
-                this.print(this.picList)
-                this.print(res)   
               }
             })
             break

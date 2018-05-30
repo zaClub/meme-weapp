@@ -102,26 +102,43 @@
     </view>
     <alltag :tags.sync="tags"></alltag>
     <button @tap="onSaveTags">保存标签</button>
+    <toast />
   </view>
-  <toast></toast>
 </template>
 
 <script>
   import wepy from 'wepy'
   import AllTag from '@/components/all-tag'
   import Toast from 'wepy-com-toast'
-  import Base64 from '../assets/icon/base64'
-  import MLog from '../mixins/mlog'
+  import ZToast from '../mixins/ztoast'
+  import { Icon } from '../assets/icon/icon'
 
   export default class Tag extends wepy.page {
-    
+
+    data = {
+      Icon: Icon,
+      memeId: '',
+      tags: [],
+      inputValue: ''
+    }
+
+    components = {
+      alltag: AllTag,
+      toast: Toast
+    }
+
+    computed = {
+      curTags() {
+        return this.tags.filter(el => el.active).sort((a, b) => a.sort - b.sort)
+      }
+    }
+
+    mixins = [ZToast]
+        
     onLoad(option) {
       wx.setNavigationBarTitle({
         title: '标签'
       })
-
-      //接收路由参数
-      this.print('option',option)
 
       //TODO: id 判空
       this.memeId = option.id
@@ -141,24 +158,6 @@
         });
         this.$apply()
       }, 200);
-    }
-
-    mixins = [Base64, MLog]
-    data = {
-      memeId: '',
-      tags: [],
-      inputValue: ''
-    }
-
-    components = {
-      alltag: AllTag,
-      toast: Toast
-    }
-
-    computed = {
-      curTags() {
-        return this.tags.filter(el => el.active).sort((a, b) => a.sort - b.sort)
-      }
     }
 
     methods = {

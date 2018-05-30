@@ -12,6 +12,7 @@
   <view class="home">
     <searchbar :disabled.sync="barDisabled"></searchbar>
     <photowall></photowall>
+    <toast />
   </view>
 </template>
 
@@ -19,19 +20,15 @@
   import wepy from 'wepy'
   import SearchBar from '@/components/search-bar'
   import PhotoWall from '@/components/photo-wall'
+  import Toast from 'wepy-com-toast'
+  import ZToast from '../mixins/ztoast'
 
   export default class Index extends wepy.page {
-    onLoad() {
-
-    }
-
-    onShow() {
-      this.$invoke('photowall','onShow')
-    }
 
     config = {}
 
     components = {
+      toast: Toast,
       searchbar: SearchBar,
       photowall: PhotoWall
     }
@@ -39,6 +36,16 @@
     data = {
       query: '',
       barDisabled: true,
+    }
+
+    mixins = [ZToast]
+
+    onLoad() {
+
+    }
+
+    onShow() {
+      this.$invoke('photowall','onShow')
     }
 
     events = {
