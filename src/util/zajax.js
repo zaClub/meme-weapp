@@ -1,12 +1,21 @@
 // 创建请求实例
-function createWxRequest(opts) {
+function _createWxRequest(opts) {
   let requestTask
+
+  // TODO: 检查 opts
 
   return new Promise((resolve, reject) => {
     requestTask = wx.request({
       ...opts,
+      header: {
+        'cookie': wx.getStorageSync("cookies"),
+        ...opts.header
+      },
       success: function(res) {
-        // TODO: 判断 http status 和 code
+        // TODO: 拦截 http status 和 code
+
+        // 更新 cookie
+        _updateCookie(res.header)
 
         resolve(res.data)
       },
@@ -20,10 +29,38 @@ function createWxRequest(opts) {
   // requestTask.abort() // 取消请求任务
 }
 
-const zajax = createWxRequest
+// 更新 cookie
+function _updateCookie(header) {
+  // 取得本次请求的 cookie
+  let newCookies = header['Set-Cookie'] ? header['Set-Cookie'].match(/[\w\_]+\=\w+;/g) : []
+  if (newCookies.length) {
+    // 取得旧 cookie
+    let cookies = wx.getStorageSync('cookies').match(/[\w\_]+\=\w+;/g) || []
+
+    // 新旧 cookie 合并
+    while (newCookies.length) {
+      const nc = newCookies.pop()
+      const ncKey = nc.match(/([\w\_]+)(?=\=)/g)[0] // 取得 cookie 名
+
+      // 原来就存在这个 cookie 则替换
+      let index = cookies.findIndex(el => el.indexOf(ncKey) >= 0)
+      if (index >= 0) cookies[index] = nc
+      // 否则加入尾部            
+      else cookies.push(nc)
+    }
+
+    // 更新 cookie
+    wx.setStorage({
+      key: 'cookies',
+      data: cookies.join('')
+    })
+  }
+}
+
+const zajax = _createWxRequest
 
 // get
-zajax.get = (url, data, opts) => createWxRequest({
+zajax.get = (url, data, opts) => _createWxRequest({
   ...opts,
   url,
   data,
@@ -31,7 +68,7 @@ zajax.get = (url, data, opts) => createWxRequest({
 })
 
 // post
-zajax.post = (url, data, opts) => createWxRequest({
+zajax.post = (url, data, opts) => _createWxRequest({
   ...opts,
   url,
   data,
